@@ -3,7 +3,7 @@
 아래 "붙여 넣을 프롬프트"를 Cowork 에 그대로 붙여 넣으면 됩니다.
 
 ## 사람이 먼저 할 일
-1. 이 zip 을 `C:\VitaLanguage` 에 풀거나, GitHub `milkaizer/hlSUSFIN` 의 `claude/proceed-as-is-rus4o2` 브랜치를 그 폴더에 받습니다. (브랜치가 더 최신일 수 있습니다. P8 보고서 `logs/build/p8-check.md` 가 브랜치에만 있을 수 있음)
+1. 이 zip 을 `C:\VitaLanguage` 에 풀거나, GitHub `milkaizer/hlSUSFIN` 의 `claude/proceed-as-is-rus4o2` 브랜치를 그 폴더에 받습니다. 둘은 같은 내용입니다(P8 재점검까지 반영).
 2. Cowork 에서 그 폴더를 작업 폴더로 엽니다.
 3. Supabase 를 이미 만들었다면 `.env.local` 을 폴더에 넣어 둡니다. 아직이면 Step B 에서 Cowork 가 멈추고 안내합니다.
 
@@ -13,7 +13,7 @@
 
 ```
 작업 폴더의 NEXT_STEPS.md, PROGRESS.md, HANDOFF.md, logs/build/decisions.md, docs/SETUP.md 를 먼저 끝까지 읽고 이어서 진행해줘.
-이 프로젝트(Vita Language, Next.js 15 + Supabase)는 P1~P7 구현과 P9 보안 수정이 끝났고, 남은 일은 NEXT_STEPS.md 2장의 Step A~E 야.
+이 프로젝트(Vita Language, Next.js 15 + Supabase)는 P1~P7 구현, P8 전체 재점검, P9 보안 수정이 끝났고, 남은 일은 NEXT_STEPS.md 2장의 Step A~E 야.
 
 진행 방식
 - NEXT_STEPS.md 2장 순서대로 진행. Step 하나가 끝날 때마다 해당 테스트를 직접 실행하고 결과표를 보여준 뒤 다음으로 넘어가.

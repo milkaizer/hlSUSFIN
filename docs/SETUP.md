@@ -4,7 +4,7 @@
 
 ## 1. Supabase (P3 전에 필요)
 
-1. supabase.com 가입, New project 생성. 리전은 Northeast Asia (Seoul).
+1. supabase.com 가입, New project 생성. 리전은 Northeast Asia (Seoul). 프로젝트를 만든 뒤에는 리전을 바꿀 수 없습니다. Vercel 서버 위치도 `vercel.json` 에서 서울(`icn1`)로 맞춰 두었습니다(둘이 같은 곳에 있어야 빠름).
 2. Project Settings > API 에서 세 값을 복사합니다.
    - Project URL: `NEXT_PUBLIC_SUPABASE_URL`
    - anon public key: `NEXT_PUBLIC_SUPABASE_ANON_KEY`

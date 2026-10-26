@@ -1,0 +1,527 @@
+NOTICE:  database "vita_test" does not exist, skipping
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ claim_session 
+---------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ claim_session 
+---------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+             grant_access             
+--------------------------------------
+ 24d8d4ef-3f5c-4c0d-9b18-b33cc7f03153
+(1 row)
+
+             grant_access             
+--------------------------------------
+ 55309dfb-3797-46d0-b85c-582ad8f37047
+(1 row)
+
+             grant_access             
+--------------------------------------
+ 902dcd8e-7101-4f26-9b3c-3df72f2a30df
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+           approve_request            
+--------------------------------------
+ 35da2fc4-63d4-4846-a343-183e5729f75c
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+            start_attempt             
+--------------------------------------
+ 2abc0456-1bf3-4cdf-9e54-974ad2d080bd
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ submit_attempt 
+----------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ grade_essay 
+-------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+            start_attempt             
+--------------------------------------
+ 7ac89513-34a0-49cc-9757-5b7bb71c5041
+(1 row)
+
+ submit_attempt 
+----------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ admin_update_entitlement 
+--------------------------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ as 
+----
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ check 
+-------
+ 
+(1 row)
+
+ expect_error 
+--------------
+ 
+(1 row)
+
+
+===== 결과 =====
+  r   |                    code                    |                                 detail                                 
+------+--------------------------------------------+------------------------------------------------------------------------
+ PASS | 10.2-1 pending: 프로필 pending             | 
+ PASS | 10.2-1 pending: 레슨 0행                   | 
+ PASS | 10.2-7 학생 entitlements insert 거부       | permission denied for table entitlements
+ PASS | 10.2-7 학생 grant_access 호출 거부         | forbidden
+ PASS | 보안: 학생 profiles role 직접 수정 거부    | permission denied for table profiles
+ PASS | 보안: 학생 admin_set_profile 거부          | forbidden
+ PASS | 보안: 학생 call_credits_for 직접 호출 거부 | permission denied for function call_credits_for
+ PASS | 10.2-5 세션 토큰 본인 조회                 | 
+ PASS | 10.2-5 재로그인 시 토큰 교체               | 
+ PASS | 세션: 다른 사람 세션 행 안 보임(관리자도)  | 
+ PASS | 10.2-2 승인 후 status approved             | 
+ PASS | 10.2-2 es 레슨 basic만 1행                 | 
+ PASS | 10.2-3 ko 레슨 직접 조회 0행               | 
+ PASS | 10.3-6 standard 레슨 직접 조회 0행         | 
+ PASS | profiles 본인만                            | 
+ PASS | 10.2-4 만료 권한 레슨 0행                  | 
+ PASS | 10.3-1 승인 상태로 신청 insert 거부        | new row violates row-level security policy for table "enrollment_reque
+ PASS | 10.3-1 타인 명의 신청 거부                 | new row violates row-level security policy for table "enrollment_reque
+ PASS | 10.3-1 신청 pending                        | 
+ PASS | 10.3-1 관리자 목록에 표시                  | 
+ PASS | 10.3-2 승인 후 레슨 2행(standard)          | 
+ PASS | 10.3-2 grant_access 경유 note              | 
+ PASS | 10.3-4 진도 저장                           | 
+ PASS | 보안: 권한 밖 레슨 진도 insert 거부        | new row violates row-level security policy for table "lesson_progress"
+ PASS | 10.4-6 학생 questions 직접 select 거부     | permission denied for table questions
+ PASS | 10.4-6 quiz_questions 정답 컬럼 없음       | 
+ PASS | 10.4 quiz_questions 4문항                  | 
+ PASS | 10.4-6 제출 전 결과 조회 거부              | not submitted
+ PASS | 10.4-1 객관식 단일 정답                    | 
+ PASS | 10.4-1 객관식 복수 순서 무관 정답          | 
+ PASS | 10.4-2 단답 정규화 정답                    | 
+ PASS | 10.4-3 서술형 채점 대기                    | 
+ PASS | 10.4 제출 후 결과에 해설 포함              | 
+ PASS | 보안: 재제출 거부                          | already submitted
+ PASS | 보안: 타인 응시 결과 조회 거부             | forbidden
+ PASS | 보안: 타인 응시 행 안 보임                 | 
+ PASS | 10.4-3 채점 후 graded, 4점                 | 
+ PASS | 10.4-4 마감 후 늦은 제출은 0점             | 
+ PASS | 10.4-5 응시 횟수 초과 거부                 | max attempts reached
+ PASS | 10.5-5 basic 학생 라이브 0행               | 
+ PASS | 10.5-1 basic 크레딧 0                      | 
+ PASS | 10.5 standard 라이브 2행                   | 
+ PASS | 10.5-6 meet_url 직접 select 거부           | permission denied for table live_sessions
+ PASS | 10.5-6 30분 이내 링크 노출                 | 
+ PASS | 10.5-6 3시간 전 링크 숨김                  | 
+ PASS | 10.5 standard 크레딧 2                     | 
+ PASS | 10.5-2 예약 후 크레딧 1                    | 
+ PASS | 10.5-3 취소 후 크레딧 2                    | 
+ PASS | 보안: 학생 call_bookings insert 거부       | permission denied for table call_bookings
+ PASS | 10.6-2 권한 없는 과목 질문 작성 거부       | new row violates row-level security policy for table "board_posts"
+ PASS | 보안: 학생 공지 작성 거부                  | new row violates row-level security policy for table "board_posts"
+ PASS | 10.6-4 학생 댓글 강사 배지 위조 불가       | 
+ PASS | 10.6-3 타 학생 비공개 질문 0행             | 
+ PASS | 10.6 같은 과목 공개 질문 보임              | 
+ PASS | 10.6-3 관리자 비공개 질문 보임             | 
+ PASS | 10.6-4 관리자 댓글 강사 배지               | 
+ PASS | 10.6-1 비로그인 공지 열람                  | 
+ PASS | 10.6-2 비로그인 질문 0행                   | 
+ PASS | 스페이서: 비공개 합격자 0행                | 
+ PASS | 보안: anon lessons 거부                    | permission denied for table lessons
+(60 rows)
+
+ pass | fail 
+------+------
+   60 |    0
+(1 row)
+

@@ -39,7 +39,7 @@ export default async function AttemptPage({ params, searchParams }: Props) {
   const header = (
     <>
       <Link href={quiz ? `/myclass/quiz/${quiz.id}` : { pathname: "/myclass", query: { tab: "quizzes" } }} className="text-sm font-semibold text-muted hover:text-azul">{t("back")}</Link>
-      <h1 className="mt-2 text-[24px] font-extrabold sm:text-[30px]">{quiz?.title ?? ""}</h1>
+      <h1 className="mt-2 text-[24px] font-extrabold sm:text-[30px]">{quiz?.title ?? t("resultTitle")}</h1>
     </>
   );
 
@@ -65,6 +65,8 @@ export default async function AttemptPage({ params, searchParams }: Props) {
   const { data: rd } = await supabase.rpc("attempt_result", { p_attempt: id });
   const rows = (rd as ResultRow[] | null) ?? [];
   const pending = current.status === "needs_grading";
+  // 자동 채점 문항의 정답이 모두 비어 있으면 아직 공개 전 (모의고사 남은 응시, 권한 만료)
+  const hidden = rows.some((r) => r.type !== "essay") && rows.filter((r) => r.type !== "essay").every((r) => r.answer === null || r.answer === undefined);
   const late = Boolean(current.deadline_at && current.submitted_at && new Date(current.submitted_at).getTime() > new Date(current.deadline_at).getTime() + 120000);
 
   const show = (q: ResultRow, v: unknown) => {
@@ -80,6 +82,7 @@ export default async function AttemptPage({ params, searchParams }: Props) {
       {header}
       {sp.auto === "1" && <p role="status" className="mt-6 rounded-tile border border-azafran bg-azafran-soft p-4 font-semibold" data-testid="auto-submitted">{t("autoSubmitted")}</p>}
       {late && <p className="mt-4 text-sm text-warn">{t("late")}</p>}
+      {hidden && <p className="mt-4 rounded-tile bg-paper p-3 text-sm text-muted" data-testid="answers-later">{t("answersLater")}</p>}
       <section className="panel mt-6 flex flex-wrap items-baseline gap-x-4 gap-y-2 p-5" data-testid="result-summary">
         <h2 className="text-[17px] font-extrabold">{t("resultTitle")}</h2>
         <p className="text-[26px] font-extrabold tabular-nums" data-testid="score">{current.score ?? 0} / {current.max_score ?? 0}</p>

@@ -67,30 +67,13 @@ begin
 end $$;
 
 -- 4) 결과 조회: 응시 때 실제로 받은 문항만, 정답·해설은 지금도 권한이 있을 때만 (관리자는 항상)
---    응시 후에 추가된 문항이나 권한이 끝난 뒤의 정답이 새지 않게 한다
-create or replace function public.attempt_result(p_attempt uuid)
-returns table (question_id uuid, type text, prompt text, choices jsonb, points int, response jsonb,
-               is_correct boolean, points_awarded numeric, answer jsonb, explanation text)
-language plpgsql stable security definer set search_path = public as $$
-declare a attempts; q quizzes; v_show boolean;
-begin
-  select * into a from attempts where id = p_attempt;
-  if not found or not (a.user_id = auth.uid() or is_admin()) then raise exception 'forbidden'; end if;
-  if a.status = 'in_progress' then raise exception 'not submitted'; end if;
-  select * into q from quizzes where id = a.quiz_id;
-  v_show := is_admin() or has_access(q.category, q.min_tier);
-  return query
-    select qs.id, qs.type, qs.prompt, qs.choices, qs.points, aa.response, aa.is_correct, aa.points_awarded,
-           case when v_show then qs.answer else null end,
-           case when v_show then qs.explanation else null end
-    from questions qs
-    join attempt_answers aa on aa.question_id = qs.id and aa.attempt_id = p_attempt
-    where qs.quiz_id = a.quiz_id order by qs.sort, qs.id;
-end $$;
+--    정의는 아래 5) 에 있음 (모의고사 마지막 응시 조건까지 포함)
 
 -- ---------------------------------------------------------------
 -- 수강신청: 과목마다 확인 중인 신청은 하나만 (관리자 목록 도배 방지)
 -- ---------------------------------------------------------------
+-- 이미 운영 중인 DB 에 같은 과목 확인 중 신청이 2개 이상 있으면 아래 인덱스 생성이 실패한다.
+-- 그때는 중복 신청을 먼저 반려(reject_request)하고 다시 실행한다
 create unique index if not exists enrollment_requests_one_pending
   on public.enrollment_requests (user_id, category) where status = 'pending';
 
@@ -110,3 +93,98 @@ end $$;
 -- 트리거 함수는 직접 호출할 일이 없다
 revoke execute on function public.handle_new_user() from authenticated, anon, public;
 revoke execute on function public.set_instructor_flag() from authenticated, anon, public;
+
+-- ---------------------------------------------------------------
+-- P8 재점검 반영
+-- ---------------------------------------------------------------
+-- 5) 응시 횟수가 여러 번인 모의고사는 마지막 응시를 마칠 때까지 정답·해설을 숨긴다 (P8-1)
+--    1회차를 빈 답으로 내고 정답을 본 뒤 2회차를 만점 받는 것을 막는다
+create or replace function public.attempt_result(p_attempt uuid)
+returns table (question_id uuid, type text, prompt text, choices jsonb, points int, response jsonb,
+               is_correct boolean, points_awarded numeric, answer jsonb, explanation text)
+language plpgsql stable security definer set search_path = public as $$
+declare a attempts; q quizzes; v_show boolean; v_used int; v_open boolean;
+begin
+  select * into a from attempts where id = p_attempt;
+  if not found or not (a.user_id = auth.uid() or is_admin()) then raise exception 'forbidden'; end if;
+  if a.status = 'in_progress' then raise exception 'not submitted'; end if;
+  select * into q from quizzes where id = a.quiz_id;
+  if is_admin() then
+    v_show := true;
+  else
+    select count(*), bool_or(status = 'in_progress') into v_used, v_open
+      from attempts where quiz_id = q.id and user_id = a.user_id;
+    v_show := has_access(q.category, q.min_tier)
+      and not coalesce(v_open, false)
+      and (q.kind = 'practice' or q.max_attempts is null or v_used >= q.max_attempts);
+  end if;
+  return query
+    select qs.id, qs.type, qs.prompt, qs.choices, qs.points, aa.response, aa.is_correct, aa.points_awarded,
+           case when v_show then qs.answer else null end,
+           case when v_show then qs.explanation else null end
+    from questions qs
+    join attempt_answers aa on aa.question_id = qs.id and aa.attempt_id = p_attempt
+    where qs.quiz_id = a.quiz_id order by qs.sort, qs.id;
+end $$;
+
+-- 6) 지금 권한이 없는 응시는 응답을 무시하고 마감 (P8-8)
+create or replace function public.submit_attempt(p_attempt uuid, p_responses jsonb) returns void
+language plpgsql security definer set search_path = public as $$
+declare a attempts; q quizzes; qs record; v_resp jsonb; v_correct boolean; v_pts numeric;
+        v_score numeric := 0; v_max numeric := 0; v_essay boolean := false; v_late boolean;
+begin
+  select * into a from attempts where id = p_attempt and user_id = auth.uid() for update;
+  if not found then raise exception 'forbidden'; end if;
+  if a.status <> 'in_progress' then raise exception 'already submitted'; end if;
+  select * into q from quizzes where id = a.quiz_id;
+  -- 마감 + 2분이 지났거나 지금 권한이 없으면 응답을 무시하고 마감 처리 (P8-8)
+  v_late := (a.deadline_at is not null and now() > a.deadline_at + interval '2 minutes')
+            or not has_access(q.category, q.min_tier);
+
+  for qs in select * from questions where quiz_id = a.quiz_id loop
+    v_resp := case when v_late then null else p_responses -> qs.id::text end;
+    v_max := v_max + qs.points;
+    v_correct := null; v_pts := null;
+    if qs.type = 'mcq_single' then
+      v_correct := v_resp is not null and v_resp = qs.answer;
+    elsif qs.type = 'mcq_multi' then
+      v_correct := v_resp is not null and jsonb_typeof(v_resp) = 'array'
+        and (select coalesce(array_agg(x order by x), '{}') from jsonb_array_elements_text(v_resp) x)
+          = (select coalesce(array_agg(x order by x), '{}') from jsonb_array_elements_text(qs.answer) x);
+    elsif qs.type = 'short_text' then
+      v_correct := v_resp is not null and exists (
+        select 1 from jsonb_array_elements_text(qs.answer) ans
+        where normalize_text(ans) = normalize_text(v_resp #>> '{}'));
+    else
+      v_essay := true;
+    end if;
+    if v_correct is not null then
+      v_pts := case when v_correct then qs.points else 0 end;
+      v_score := v_score + v_pts;
+    end if;
+    insert into attempt_answers (attempt_id, question_id, response, is_correct, points_awarded)
+    values (p_attempt, qs.id, v_resp, v_correct, v_pts)
+    on conflict (attempt_id, question_id) do update set response = excluded.response,
+      is_correct = excluded.is_correct, points_awarded = excluded.points_awarded;
+  end loop;
+
+  update attempts set submitted_at = now(), score = v_score, max_score = v_max,
+    status = case when v_essay then 'needs_grading' else 'graded' end
+  where id = p_attempt;
+end $$;
+
+-- 7) 차단·승인 대기 회원은 회화콜 크레딧 0 (P8-5). 웹훅이 over_limit 으로 표시한다
+create or replace function public.call_credits_for(p_user uuid, p_category text, p_at timestamptz default now())
+returns int language sql stable security definer set search_path = public as $$
+  select case when not exists (select 1 from profiles where id = p_user and status = 'approved') then 0 else
+  greatest(0,
+    coalesce((select max(t.monthly_call_credits) from entitlements e join tiers t on t.slug = e.tier
+              where e.user_id = p_user and e.category = p_category and p_at >= e.starts_at and p_at < e.expires_at), 0)
+    + coalesce((select sum(delta) from credit_adjustments
+              where user_id = p_user and category = p_category and month = seoul_month(p_at)), 0)
+    - (select count(*) from call_bookings
+              where user_id = p_user and category = p_category and status = 'accepted'
+                and seoul_month(starts_at) = seoul_month(p_at)))::int end;
+$$;
+revoke execute on function public.call_credits_for(uuid, text, timestamptz) from authenticated, anon, public;
+grant execute on function public.call_credits_for(uuid, text, timestamptz) to service_role;

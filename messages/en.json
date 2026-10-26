@@ -173,7 +173,8 @@
     "error": "Could not save. Check what you entered.",
     "deleteConfirm": "This cannot be undone. Delete it?",
     "notice": "Notice",
-    "qaNoAccess": "You do not have access to this course's Q&A. Choose one of your course tabs."
+    "qaNoAccess": "You do not have access to this course's Q&A. Choose one of your course tabs.",
+    "deleteError": "Could not delete. Try again in a moment."
   },
   "myclass": {
     "title": "My Class",
@@ -231,7 +232,7 @@
     "upcomingLive": "Upcoming live classes",
     "upcomingCalls": "Upcoming calls",
     "meetLink": "Join on Meet",
-    "overLimit": "Over your monthly limit. The instructor will check it.",
+    "overLimit": "Waiting for the instructor to confirm",
     "prevLesson": "Previous lesson",
     "nextLesson": "Next lesson",
     "backToMyclass": "Back to My Class",
@@ -269,7 +270,8 @@
     "submitError": "Could not submit. Check your connection and press submit again.",
     "points": "{n} pt",
     "pendingItem": "Waiting for grading",
-    "late": "This was submitted after the deadline, so the answers were not counted."
+    "late": "This was submitted after the deadline, so the answers were not counted.",
+    "answersLater": "Answers and explanations open after you use all your attempts."
   },
   "footer": {
     "contact": "Contact",

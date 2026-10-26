@@ -98,6 +98,7 @@ export default async function PostPage({ params, searchParams }: Props) {
         {canComment && (
           <form action={createComment} className="mt-6 space-y-3">
             {sp.err === "1" && <p role="alert" className="text-sm font-semibold text-warn">{t("error")}</p>}
+            {sp.err === "del" && <p role="alert" className="text-sm font-semibold text-warn">{t("deleteError")}</p>}
             <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="post_id" value={post.id} />
             <label htmlFor="c-body" className="sr-only">{t("comment")}</label>

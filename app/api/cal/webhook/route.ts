@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isCategorySlug } from "@/content/categories";
 import { isMeetUrl, isUuid } from "@/lib/validate";
+import { verifyCalMetadataSig } from "@/lib/cal";
 
 // Cal.com 웹훅. 서명 검증 후 call_bookings 기록 (10.3)
 // 예약 링크에 metadata[user_id], metadata[category] 를 붙여 보낸다 (lib/cal.ts)
@@ -13,7 +14,7 @@ type CalPayload = {
     uid?: string; rescheduleUid?: string; fromReschedule?: string;
     startTime?: string; endTime?: string;
     attendees?: { email?: string }[];
-    metadata?: { user_id?: string; category?: string; videoCallUrl?: string };
+    metadata?: { user_id?: string; category?: string; sig?: string; videoCallUrl?: string };
     responses?: { email?: { value?: string } | string };
     videoCallData?: { url?: string };
   };
@@ -43,8 +44,9 @@ export async function POST(request: NextRequest) {
 
   let body: CalPayload;
   try { body = JSON.parse(raw); } catch { return NextResponse.json({ error: "bad_json" }, { status: 400 }); }
+  if (!body || typeof body !== "object" || Array.isArray(body)) return NextResponse.json({ error: "bad_payload" }, { status: 400 });
   const event = body.triggerEvent;
-  const p = body.payload ?? {};
+  const p = body.payload && typeof body.payload === "object" ? body.payload : {};
   const uid = typeof p.uid === "string" && p.uid.length <= 200 ? p.uid : null;
   if (!uid) return NextResponse.json({ ok: true, ignored: true });
 
@@ -52,8 +54,14 @@ export async function POST(request: NextRequest) {
   const now = new Date().toISOString();
 
   if (event === "BOOKING_CANCELLED") {
-    const { error } = await db.from("call_bookings").update({ status: "cancelled", updated_at: now }).eq("cal_uid", uid);
+    const { data: row, error } = await db.from("call_bookings").update({ status: "cancelled", updated_at: now }).eq("cal_uid", uid).select("id");
     if (error) return NextResponse.json({ error: "db_error" }, { status: 500 });
+    // 생성보다 취소가 먼저 오면 취소 행을 남겨 두어, 늦게 온 생성이 크레딧을 쓰지 않게 한다 (P8-7)
+    const s = isoOrNull(p.startTime);
+    const e = isoOrNull(p.endTime);
+    if ((!row || row.length === 0) && s && e) {
+      await db.from("call_bookings").upsert({ cal_uid: uid, starts_at: s, ends_at: e, status: "cancelled", updated_at: now }, { onConflict: "cal_uid", ignoreDuplicates: true });
+    }
     return NextResponse.json({ ok: true, status: "cancelled" });
   }
   if (event !== "BOOKING_CREATED" && event !== "BOOKING_RESCHEDULED") return NextResponse.json({ ok: true, ignored: true });
@@ -66,14 +74,15 @@ export async function POST(request: NextRequest) {
   const rawEmail = p.attendees?.[0]?.email ?? respEmail ?? null;
   const email = typeof rawEmail === "string" && rawEmail.length <= 320 ? rawEmail.trim().toLowerCase() : null;
 
-  // 사용자 식별 (10.3). metadata.user_id 는 예약 링크에 붙는 값이라 누구나 바꿀 수 있으므로,
-  // 참석자 이메일이 그 회원 이메일과 같을 때만 믿는다 (P9-2). 그 밖에는 이메일로 회원을 찾아 표시만 하고
-  // 상태를 over_limit 로 두어 관리자가 확인한다 (다른 학생 크레딧 소진 방지)
+  // 사용자 식별 (10.3). metadata 는 예약 링크에 붙는 값이라 예약자가 바꿀 수 있으므로,
+  // My Class 가 만든 서명(metadata.sig)이 맞을 때만 그 회원과 과목을 믿는다 (P9-2, P8-2).
+  // 그 밖에는 이메일로 회원을 찾아 표시만 하고 over_limit 로 두어 관리자가 확인한다 (다른 학생 크레딧 소진 방지)
+  const category = isCategorySlug(p.metadata?.category) ? p.metadata!.category! : null;
   let userId: string | null = null;
   let trusted = false;
-  if (isUuid(p.metadata?.user_id)) {
-    const { data } = await db.from("profiles").select("id,email").eq("id", p.metadata!.user_id!).maybeSingle<{ id: string; email: string }>();
-    if (data && email && data.email.trim().toLowerCase() === email) {
+  if (isUuid(p.metadata?.user_id) && category && verifyCalMetadataSig(p.metadata!.user_id!, category, p.metadata?.sig)) {
+    const { data } = await db.from("profiles").select("id").eq("id", p.metadata!.user_id!).maybeSingle<{ id: string }>();
+    if (data) {
       userId = data.id;
       trusted = true;
     }
@@ -82,12 +91,11 @@ export async function POST(request: NextRequest) {
     const { data } = await db.from("profiles").select("id").eq("email", email).limit(1).maybeSingle();
     userId = data?.id ?? null;
   }
-  const category = isCategorySlug(p.metadata?.category) ? p.metadata!.category! : null;
 
   // 일정 변경: 이전 예약은 취소 처리하고 새 예약을 기록
   const previous = p.rescheduleUid ?? p.fromReschedule;
   // 같은 회원의 예약일 때만 취소한다 (다른 회원 예약을 건드리지 않게)
-  if (event === "BOOKING_RESCHEDULED" && typeof previous === "string" && previous !== uid && userId) {
+  if (event === "BOOKING_RESCHEDULED" && typeof previous === "string" && previous !== uid && trusted && userId) {
     await db.from("call_bookings").update({ status: "cancelled", updated_at: now }).eq("cal_uid", previous).eq("user_id", userId);
   }
 

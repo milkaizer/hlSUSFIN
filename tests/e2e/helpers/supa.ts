@@ -96,6 +96,11 @@ export async function cleanup() {
   }
 }
 
+// 예약 링크 metadata 서명 (lib/cal.ts 와 같은 계산. lib/cal.ts 는 server-only 라 테스트에서 import 못 함)
+export function calSig(userId: string, category: string, secret = process.env.CAL_WEBHOOK_SECRET ?? "") {
+  return createHmac("sha256", secret).update(`vita-booking:${userId}:${category}`).digest("hex").slice(0, 32);
+}
+
 // Cal.com 웹훅 서명 (x-cal-signature-256)
 export function sign(body: string, secret = process.env.CAL_WEBHOOK_SECRET ?? "") {
   return createHmac("sha256", secret).update(body).digest("hex");

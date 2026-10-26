@@ -19,3 +19,7 @@ local-stack/mail/
 
 .DS_Store
 .vercel
+
+# 테스트 스크립트가 매번 다시 쓰는 빌드 로그
+logs/build/*-build*.log
+logs/build/app-build*.log

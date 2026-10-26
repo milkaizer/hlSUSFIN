@@ -41,7 +41,8 @@ export default async function ApplyPage({ params, searchParams }: Props) {
     requests = (data as RequestRow[] | null) ?? [];
   }
 
-  const loginHref = `${localePath(locale, "/login")}?next=${localePath(locale, "/apply")}`;
+  const applyPath = localePath(locale, "/apply");
+  const loginHref = `${localePath(locale, "/login")}?next=${isCategorySlug(sp.category) ? encodeURIComponent(`${applyPath}?category=${sp.category}`) : applyPath}`;
 
   return (
     <>

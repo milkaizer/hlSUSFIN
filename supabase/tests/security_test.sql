@@ -82,6 +82,47 @@ select t.check('보안 트리거 함수 직접 실행 권한 없음',
   not has_function_privilege('authenticated', 'public.handle_new_user()', 'execute')
   and not has_function_privilege('authenticated', 'public.set_instructor_flag()', 'execute'));
 
+
+-- ===== P8 재점검 반영 =====
+-- 응시 2회 모의고사: 1회차 결과에서는 정답을 숨기고, 2회차까지 마치면 공개
+reset role;
+update public.entitlements set starts_at = now() - interval '2 days', expires_at = now() + interval '30 days' where user_id = '00000000-0000-0000-0000-000000000003';
+insert into public.quizzes (id, category, title, kind, max_attempts, published) values
+  ('30000000-0000-0000-0000-000000000009', 'es-conversation', '모의 2회', 'mock', 2, true);
+insert into public.questions (quiz_id, type, prompt, choices, answer, explanation) values
+  ('30000000-0000-0000-0000-000000000009', 'mcq_single', 'q', '["a","b"]', '1', '비밀 해설');
+set role authenticated;
+select t.as('00000000-0000-0000-0000-000000000003');
+select public.submit_attempt(public.start_attempt('30000000-0000-0000-0000-000000000009'), '{}');
+select t.check('보안 P8-1 모의고사 1회차 결과 정답 숨김',
+  (select count(*) from public.attempt_result((select id from public.attempts where quiz_id = '30000000-0000-0000-0000-000000000009' and user_id = auth.uid() order by started_at limit 1)) where answer is not null or explanation is not null) = 0);
+select public.start_attempt('30000000-0000-0000-0000-000000000009');
+select t.check('보안 P8-1 2회차 진행 중에도 1회차 정답 숨김',
+  (select count(*) from public.attempt_result((select id from public.attempts where quiz_id = '30000000-0000-0000-0000-000000000009' and user_id = auth.uid() and status <> 'in_progress' limit 1)) where explanation is not null) = 0);
+select public.submit_attempt((select id from public.attempts where quiz_id = '30000000-0000-0000-0000-000000000009' and user_id = auth.uid() and status = 'in_progress'), '{}');
+select t.check('보안 P8-1 응시 횟수를 다 쓰면 정답 공개',
+  (select count(*) from public.attempt_result((select id from public.attempts where quiz_id = '30000000-0000-0000-0000-000000000009' and user_id = auth.uid() order by started_at limit 1)) where explanation = '비밀 해설') = 1);
+
+-- 권한이 끝난 뒤 제출하면 응답 무시 (0점)
+reset role;
+insert into public.attempts (id, quiz_id, user_id) values ('80000000-0000-0000-0000-000000000001', '30000000-0000-0000-0000-000000000009', '00000000-0000-0000-0000-000000000001');
+set role authenticated;
+select t.as('00000000-0000-0000-0000-000000000001');
+select public.submit_attempt('80000000-0000-0000-0000-000000000001', '{"x":1}');
+select t.check('보안 P8-8 권한 만료 후 제출은 0점 마감',
+  (select status = 'graded' and score = 0 from public.attempts where id = '80000000-0000-0000-0000-000000000001'));
+
+-- 차단 회원은 회화콜 크레딧 0
+reset role;
+set role service_role;
+select t.as(null, 'service_role');
+select t.check('보안 P8-5 승인 회원 크레딧 있음', public.call_credits_for('00000000-0000-0000-0000-000000000002', 'es-conversation') > 0);
+reset role;
+update public.profiles set status = 'blocked' where id = '00000000-0000-0000-0000-000000000002';
+set role service_role;
+select t.check('보안 P8-5 차단 회원 크레딧 0', public.call_credits_for('00000000-0000-0000-0000-000000000002', 'es-conversation') = 0);
+reset role;
+
 \echo
 \echo ===== 보안 테스트 결과 =====
 select case when ok then 'PASS' else 'FAIL' end as r, code, left(detail, 70) as detail from t.results where id > :start_id order by id;

@@ -10,13 +10,13 @@
 | Phase | 상태 | 확인 방법과 결과 |
 |---|---|---|
 | P1 공개 페이지 | 기능 완료, 독립 검증 완료 | `bash scripts/test-p1.sh`: 13.1 Playwright 17/17 PASS. 검증 보고서 `logs/build/p1-verify.md` 의 D1~D10 수정 |
-| P2 DB | 완료 | `npm run test:db`: 부록 C 60/60, 앱 수준 37/37, 보안 19/19 PASS (로컬 PostgreSQL 16) |
+| P2 DB | 완료 | `npm run test:db`: 부록 C 60/60, 앱 수준 37/37, 보안 25/25 PASS (로컬 PostgreSQL 16) |
 | P3 로그인·1계정 1세션·관리자 회원 | 구현 완료, E2E 대기 | 실제 Supabase 가 없어 `tests/e2e/p3-auth.spec.ts` 미실행 |
 | P4 수강신청·My Class·레슨 | 구현 완료, E2E 대기 | `tests/e2e/p4-courses.spec.ts` 미실행 |
 | P5 문제·모의고사·채점 | 구현 완료, E2E 대기 | `tests/e2e/p5-quiz.spec.ts` 미실행 |
 | P6 회화콜·라이브·캘린더 | 구현 완료, E2E 대기 | `tests/e2e/p6-calls.spec.ts` 미실행 |
 | P7 공지·Q&A·합격자·단계 설정 | 구현 완료, E2E 대기 | `tests/e2e/p7-board.spec.ts` 미실행 |
-| P8 전체 재점검 | 진행 중 | 보고서가 `logs/build/p8-check.md` 로 브랜치에 올라감 (없으면 아직 진행 중이었던 것) |
+| P8 전체 재점검 | 완료, 수정 반영 | `logs/build/p8-check.md`. 남은 Medium 1, Low 9 수정 후 P1 17/17, DB 122/122 재확인 |
 | P9 보안 리뷰 | 완료, 전부 수정 | `logs/build/p9-security.md`. High 2, Medium 4, Low·Info 4 수정 |
 | P10 배포 | 미착수 | 사람 선행 작업 필요 |
 
@@ -27,7 +27,8 @@ P3~P7 은 tsc, eslint, next build 오류 0 이고, 독립 검증 에이전트가
 - 로케일 자동 감지를 껐다. `/` 는 항상 한국어, `/en` 은 영어.
 - `/auth/callback` 이 `token_hash` 매직링크도 받는다. 메일 템플릿을 바꾸면 다른 브라우저에서 링크를 열어도 로그인된다(`docs/SETUP.md` 1-6).
 - 1계정 1세션 검사를 미들웨어뿐 아니라 `lib/auth.ts` 의 `getViewer` 에서도 한다.
-- Cal.com 웹훅은 예약자 이메일이 회원 이메일과 같을 때만 그 회원의 크레딧을 쓴다. 나머지는 "확인 필요"(`over_limit`).
+- Cal.com 예약 링크에 서버 서명(`metadata[sig]`)을 붙이고, 웹훅은 서명이 맞을 때만 그 회원의 크레딧을 쓴다. 나머지는 "확인 필요"(`over_limit`). 그래서 `CAL_WEBHOOK_SECRET` 이 없으면 예약 버튼이 나오지 않는다.
+- 응시 2회 이상인 모의고사는 마지막 응시까지 정답·해설을 숨긴다.
 - `@playwright/test` 는 1.63.0 (클라우드 컨테이너 브라우저에 맞춤). 다른 PC 에서는 `npx playwright install chromium` 한 번 필요.
 
 ---

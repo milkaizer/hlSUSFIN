@@ -173,7 +173,8 @@
     "error": "저장하지 못했습니다. 입력한 내용을 확인해 주세요.",
     "deleteConfirm": "삭제하면 되돌릴 수 없습니다. 삭제할까요?",
     "notice": "공지",
-    "qaNoAccess": "이 과목의 Q&A를 볼 수 있는 권한이 없습니다. 수강 중인 과목의 탭을 골라 주세요."
+    "qaNoAccess": "이 과목의 Q&A를 볼 수 있는 권한이 없습니다. 수강 중인 과목의 탭을 골라 주세요.",
+    "deleteError": "삭제하지 못했습니다. 잠시 후 다시 시도해 주세요."
   },
   "myclass": {
     "title": "My Class",
@@ -231,7 +232,7 @@
     "upcomingLive": "다가오는 라이브",
     "upcomingCalls": "다가오는 예약",
     "meetLink": "Meet 입장",
-    "overLimit": "횟수 초과로 강사 확인 중",
+    "overLimit": "강사 확인 중",
     "prevLesson": "이전 레슨",
     "nextLesson": "다음 레슨",
     "backToMyclass": "My Class로",
@@ -269,7 +270,8 @@
     "submitError": "제출하지 못했습니다. 네트워크를 확인하고 다시 눌러 주세요.",
     "points": "{n}점",
     "pendingItem": "채점 대기",
-    "late": "마감 시간이 지나 제출되어 답이 인정되지 않았습니다."
+    "late": "마감 시간이 지나 제출되어 답이 인정되지 않았습니다.",
+    "answersLater": "정답과 해설은 응시 횟수를 모두 사용한 뒤에 공개됩니다."
   },
   "footer": {
     "contact": "문의",

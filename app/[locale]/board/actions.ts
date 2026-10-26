@@ -37,7 +37,7 @@ export async function createComment(fd: FormData) {
   if (!body) redirect(`${localePath(locale, `/board/${postId}`)}?err=1`);
   // is_instructor 는 트리거가 정한다
   const { error } = await supabase.from("board_comments").insert({ post_id: postId, author_id: user.id, body });
-  redirect(`${localePath(locale, `/board/${postId}`)}${error ? "?err=1" : "#comments"}`);
+  redirect(`${localePath(locale, `/board/${postId}`)}${error ? "?err=del" : "#comments"}`);
 }
 
 export async function deletePost(fd: FormData) {
@@ -47,7 +47,7 @@ export async function deletePost(fd: FormData) {
   const { supabase, user } = await getViewer();
   if (!supabase || !user || !isUuid(postId)) redirect(localePath(locale, "/board"));
   const { error } = await supabase.from("board_posts").delete().eq("id", postId);
-  if (error) redirect(`${localePath(locale, `/board/${postId}`)}?err=1`);
+  if (error) redirect(`${localePath(locale, `/board/${postId}`)}?err=del`);
   redirect(`${localePath(locale, "/board")}${isCategorySlug(category) ? `?c=${category}` : ""}`);
 }
 

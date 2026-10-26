@@ -26,7 +26,11 @@ const body = JSON.stringify({
     startTime: start.toISOString(),
     endTime: new Date(start.getTime() + 15 * 60 * 1000).toISOString(),
     attendees: [{ email: process.env.ATTENDEE_EMAIL ?? "student@example.com" }],
-    metadata: { user_id: userId, category, videoCallUrl: "https://meet.google.com/abc-defg-hij" },
+    metadata: {
+      user_id: userId, category, videoCallUrl: "https://meet.google.com/abc-defg-hij",
+      // My Class 예약 링크와 같은 서명 (lib/cal.ts)
+      sig: createHmac("sha256", secret).update(`vita-booking:${userId}:${category}`).digest("hex").slice(0, 32),
+    },
   },
 });
 const signature = kind === "bad" ? "0".repeat(64) : createHmac("sha256", secret).update(body).digest("hex");

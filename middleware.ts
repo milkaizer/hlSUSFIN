@@ -2,12 +2,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { routing } from "@/i18n/routing";
-import { SESSION_COOKIE } from "@/lib/session";
+import { SESSION_COOKIE, SESSION_MAX_AGE } from "@/lib/session";
 
 type CookieList = { name: string; value: string; options: CookieOptions }[];
 
 const intl = createIntlMiddleware(routing);
-const PROTECTED = /^\/(en\/)?(myclass|admin|apply)(\/|$)/;
+const LOGIN = /^\/(en\/)?login(\/|$)/;
 
 export async function middleware(request: NextRequest) {
   const response = intl(request);
@@ -24,17 +24,22 @@ export async function middleware(request: NextRequest) {
 
   // 세션 갱신 (만료된 access token 을 새로 받아 쿠키에 쓴다)
   const { data: { user } } = await supabase.auth.getUser();
-  const path = request.nextUrl.pathname;
-  // /%6Dyclass 처럼 인코딩된 경로도 같은 페이지로 가므로 풀어서 검사한다. 풀 수 없으면 보호 경로로 본다
-  let decoded = path;
-  try { decoded = decodeURIComponent(path); } catch { decoded = "/myclass"; }
-  if (!user || !(PROTECTED.test(path) || PROTECTED.test(decoded))) return response;
+  if (!user) return response;
 
-  // 1계정 1세션: 쿠키 토큰과 DB 토큰 비교
+  // 1계정 1세션 (9.1): 로그인한 요청은 모든 페이지에서 쿠키 토큰과 DB 토큰을 비교한다
+  // (처음엔 보호 경로만 봤지만 /%6Dyclass 같은 인코딩 경로와 게시판으로 우회돼 전체로 넓힘)
+  const path = request.nextUrl.pathname;
+  let decoded = path;
+  try { decoded = decodeURIComponent(path); } catch { decoded = path; }
   const cookieToken = request.cookies.get(SESSION_COOKIE)?.value;
   const { data } = await supabase.from("user_sessions").select("session_token").eq("user_id", user.id).maybeSingle();
   if (!cookieToken || !data || data.session_token !== cookieToken) {
     await supabase.auth.signOut({ scope: "local" });
+    // 로그인 화면이면 이동 없이 이 기기 세션만 정리 (리다이렉트 반복 방지)
+    if (LOGIN.test(decoded)) {
+      response.cookies.delete(SESSION_COOKIE);
+      return response;
+    }
     const prefix = decoded === "/en" || decoded.startsWith("/en/") ? "/en" : "";
     const target = new URL(`${prefix}/login?reason=other_device`, request.url);
     const redirect = NextResponse.redirect(target);
@@ -42,6 +47,14 @@ export async function middleware(request: NextRequest) {
     redirect.cookies.delete(SESSION_COOKIE);
     return redirect;
   }
+  // 쓰는 동안은 세션 쿠키 기한을 늘린다 (30일 고정 만료로 같은 기기가 튕기는 것 방지, P8-9)
+  response.cookies.set(SESSION_COOKIE, cookieToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production" && request.nextUrl.protocol === "https:",
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
   return response;
 }
 

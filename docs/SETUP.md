@@ -54,11 +54,11 @@ E2E 는 실제 프로젝트에 `vita-e2e-...@example.com` 테스트 사용자와
 3. Settings > Developer > Webhooks
    - URL: `https://<도메인>/api/cal/webhook`
    - 이벤트: Booking Created, Booking Cancelled, Booking Rescheduled
-   - 시크릿을 정해서 같은 값을 `CAL_WEBHOOK_SECRET` 에
+   - 시크릿을 정해서 같은 값을 `CAL_WEBHOOK_SECRET` 에 (이 값이 없으면 My Class 의 예약 버튼이 나오지 않습니다. 예약 링크 서명에도 쓰기 때문)
 4. 연결 후 Cal.com 화면의 테스트 웹훅(Ping)을 한 번 보내 보고, 실제 예약을 하나 만들어 관리자 > 회화콜 화면에 들어오는지 확인합니다. payload 필드 이름이 다르면 알려 주세요 (HANDOFF 10.3).
 5. 로컬에서 서명 맞춘 가짜 요청 보내기
    ```
-   CAL_WEBHOOK_SECRET=... node scripts/cal-webhook-test.mjs created <학생 user_id>
+   CAL_WEBHOOK_SECRET=... ATTENDEE_EMAIL=<학생 이메일> node scripts/cal-webhook-test.mjs created <학생 user_id>
    ```
 
 ## 4. 배포 (P10)

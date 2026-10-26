@@ -1,5 +1,5 @@
 import { test, expect, type APIRequestContext } from "@playwright/test";
-import { adminDb, cleanup, configured, grant, makeUser, newUserPage, RUN, sign, TAG, type TestUser } from "./helpers/supa";
+import { adminDb, calSig, cleanup, configured, grant, makeUser, newUserPage, RUN, sign, TAG, type TestUser } from "./helpers/supa";
 
 // 13.6 P6 회화콜·라이브 (실제 Supabase, 웹훅은 서명 맞춘 가짜 요청)
 test.describe.configure({ mode: "serial" });
@@ -17,7 +17,10 @@ function booking(trigger: string, uid: string, user: TestUser, startsInHours = 1
     payload: {
       uid, startTime: start.toISOString(), endTime: new Date(start.getTime() + 15 * 60000).toISOString(),
       attendees: [{ email: (extra.attendeeEmail as string | undefined) ?? user.email }],
-      metadata: { user_id: user.id, category: "es-conversation", videoCallUrl: "https://meet.google.com/abc-defg-hij" },
+      metadata: {
+        user_id: user.id, category: "es-conversation", videoCallUrl: "https://meet.google.com/abc-defg-hij",
+        sig: (extra.sig as string | undefined) ?? calSig(user.id, "es-conversation"),
+      },
       ...extra,
     },
   });
@@ -67,6 +70,7 @@ test("13.6-2·3·4·5 standard: 2회, 예약 링크 metadata, 웹훅 기록·재
   expect(u.searchParams.get("metadata[user_id]")).toBe(standard.id);
   expect(u.searchParams.get("metadata[category]")).toBe("es-conversation");
   expect(u.searchParams.get("email")).toBe(standard.email);
+  expect(u.searchParams.get("metadata[sig]")).toBe(calSig(standard.id, "es-conversation"));
 
   const uid = `${RUN}-b1`;
   const created = booking("BOOKING_CREATED", uid, standard);
@@ -121,9 +125,9 @@ test("13.6-7 크레딧 0 에서 예약: over_limit, 관리자 현황 카운트 �
   expect(data).toEqual([{ cal_uid: `${RUN}-c1`, status: "cancelled" }, { cal_uid: `${RUN}-c1r`, status: "accepted" }]);
 });
 
-test("P9-2 예약자 이메일이 회원과 다르면 크레딧을 쓰지 않고 확인 필요", async ({ request }) => {
+test("P9-2 metadata 서명이 틀리면 크레딧을 쓰지 않고 확인 필요", async ({ request }) => {
   const before = (await adminDb().rpc("call_credits_for", { p_user: standard.id, p_category: "es-conversation", p_at: new Date().toISOString() })).data;
-  const r = await post(request, booking("BOOKING_CREATED", `${RUN}-spoof`, standard, 1 / 6, { attendeeEmail: "someone-else@example.com" }));
+  const r = await post(request, booking("BOOKING_CREATED", `${RUN}-spoof`, standard, 1 / 6, { sig: "0".repeat(32) }));
   expect((await r.json()).status).toBe("over_limit");
   const after = (await adminDb().rpc("call_credits_for", { p_user: standard.id, p_category: "es-conversation", p_at: new Date().toISOString() })).data;
   expect(after).toBe(before);

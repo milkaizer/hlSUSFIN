@@ -121,3 +121,4 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - 미들웨어는 링크 prefetch 요청에서 세션 토큰이 달라도 로그아웃과 쿠키 삭제를 하지 않음. 백그라운드 요청이 쿠키를 지우면 다음 이동에서 other_device 안내 없이 일반 로그인 화면으로 가서(13.3-2). 페이지와 서버 액션은 getViewer 가 같은 비교로 막으므로 prefetch 헤더로 우회할 수 없음.
 - 실제 Supabase E2E(app)는 기다림을 expect 30초, 테스트 180초로 늘림. 개발 PC 에서 서울 DB 왕복이 회당 0.4~2초라 서버 액션 한 번이 10초를 넘김. 운영은 Vercel icn1 과 같은 리전이라 해당 없음.
 - 같은 폼을 연달아 제출하는 E2E 단계는 제출 응답과 화면 행 수 증가까지 기다린 뒤 다음 입력을 시작함(submitAction). 앞 제출의 폼 초기화가 뒤에 입력한 값을 덮어쓰는 경쟁 때문. 앱 코드 문제는 아님(공개 목록의 published 필터는 이미 있음).
+- Google 로그인: Google Cloud 프로젝트 `vita-language`, Google Auth Platform 앱 이름 Vita Language, 사용자 유형 External, 게시 상태 Testing. 테스트 사용자에 운영자 계정 1개 등록. OAuth 클라이언트(웹) 리디렉션 URI 는 `https://uikntymdnkuogwncjakk.supabase.co/auth/v1/callback` 하나. Supabase Google 공급자 켜고 Client ID 입력, Client Secret 은 사용자가 직접 입력. 학생 초대 전(Step E)에 앱을 Production 으로 게시해야 테스트 사용자 외에도 로그인됨(이름, 이메일만 쓰므로 Google 검수 대상 아님으로 예상, 게시 때 확인).

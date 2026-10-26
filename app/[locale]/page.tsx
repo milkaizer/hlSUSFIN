@@ -29,11 +29,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <Hero />
       <CourseTiles items={categories} locale={locale} />
       <Features />
-      <section data-section="pricing" className="wrap py-12 sm:py-16">
-        <h2 className="h-section">{t("pricingTitle")}</h2>
-        <p className="lead mt-2">{t("pricingLead")}</p>
-        <div className="mt-8"><TierCards tiers={tiers} locale={locale} /></div>
-        <Link href="/pricing" className="btn-quiet mt-6">{t("pricingMore")}</Link>
+      <section data-section="pricing" className="wrap sec">
+        <div className="sec-head">
+          <h2 className="h-section">{t("pricingTitle")}</h2>
+          <p className="lead mt-2">{t("pricingLead")}</p>
+        </div>
+        <div className="mt-10 md:mt-12"><TierCards tiers={tiers} locale={locale} /></div>
+        <div className="mt-8 text-center"><Link href="/pricing" className="btn-pill">{t("pricingMore")}</Link></div>
       </section>
       {flags.showResults && <ResultsSection items={results} locale={locale} />}
       {flags.showReviews && <ReviewsSection items={reviews} locale={locale} />}

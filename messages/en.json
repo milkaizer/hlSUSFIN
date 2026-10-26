@@ -80,7 +80,14 @@
     "apply": "Apply for this course",
     "other": "Other courses",
     "lang_es": "Spanish",
-    "lang_ko": "Korean"
+    "lang_ko": "Korean",
+    "specAudience": "For",
+    "specCurriculum": "Units",
+    "specIncludes": "Includes",
+    "unitCount": "{count} units",
+    "firstUnit": "Unit 1: {first}",
+    "includesShort": "Lessons, practice, Q&A",
+    "includesSub": "Live classes and calls from Standard"
   },
   "pricing": {
     "title": "Plans",
@@ -99,7 +106,14 @@
     "useApply": "Apply instead",
     "note": "Prices and plan contents will be set at the official launch.",
     "included": "Included",
-    "notIncluded": "Not included"
+    "notIncluded": "Not included",
+    "specCore": "Includes",
+    "specLive": "Live",
+    "specCalls": "Calls",
+    "specPrice": "Price",
+    "coreShort": "Lessons, practice, Q&A",
+    "payGuide": "Online payment opens at the official launch. For now, apply and you can start once the instructor approves.",
+    "applyShort": "Apply"
   },
   "apply": {
     "title": "Apply",
@@ -277,7 +291,8 @@
     "contact": "Contact",
     "terms": "Terms of use",
     "privacy": "Privacy policy",
-    "rights": "All rights reserved."
+    "rights": "All rights reserved.",
+    "links": "Links"
   },
   "legal": {
     "draft": "This page is being drafted and will be posted before the official launch."

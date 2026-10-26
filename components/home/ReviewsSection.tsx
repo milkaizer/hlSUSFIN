@@ -21,14 +21,14 @@ export async function ReviewsSection({ items, locale }: { items: ReviewRow[]; lo
   const t = await getTranslations("home");
   const shown = items.slice(0, 4);
   return (
-    <section data-section="reviews" className="wrap py-12 sm:py-16">
-      <h2 className="h-section">{t("reviewsTitle")}</h2>
+    <section data-section="reviews" className="wrap sec">
+      <h2 className="h-section text-center">{t("reviewsTitle")}</h2>
       {shown.length === 0 ? (
-        <p className="mt-4 text-muted" data-testid="reviews-empty">{t("reviewsEmpty")}</p>
+        <p className="mt-4 text-center text-muted" data-testid="reviews-empty">{t("reviewsEmpty")}</p>
       ) : (
-        <div className="mt-8">
+        <div className="mt-10">
           <ReviewList items={shown} locale={locale} />
-          {items.length > 4 && <Link href="/reviews" className="btn-quiet mt-6">{t("reviewsMore")}</Link>}
+          {items.length > 4 && <div className="mt-8 text-center"><Link href="/reviews" className="btn-pill">{t("reviewsMore")}</Link></div>}
         </div>
       )}
     </section>

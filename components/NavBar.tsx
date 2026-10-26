@@ -26,6 +26,8 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
+  // 8px 넘게 내리면 데스크톱 헤더를 72px 에서 56px 로 줄인다 (모바일은 64px 고정)
+  const [scrolled, setScrolled] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
   const menuBtnRef = useRef<HTMLButtonElement>(null);
@@ -37,6 +39,13 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
     setMenuOpen(false);
     setCoursesOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // 드롭다운 바깥 클릭으로 닫기
   useEffect(() => {
@@ -76,7 +85,8 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
   ];
 
   return (
-    <nav aria-label={t("main")} className="wrap flex h-16 items-center gap-4">
+    <nav aria-label={t("main")}
+      className={`wrap flex h-16 items-center gap-4 transition-[height] duration-200 motion-reduce:transition-none ${scrolled ? "lg:h-14" : "lg:h-[72px]"}`}>
       <Link href="/" aria-label={t("home")} className="mr-2 shrink-0 rounded-tile">
         <Logo />
       </Link>
@@ -93,12 +103,12 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
               <Caret className={`h-3.5 w-3.5 transition-transform ${coursesOpen ? "rotate-180" : ""}`} />
             </button>
             <ul id={dropId} hidden={!coursesOpen} data-testid="courses-menu"
-              className="absolute left-0 top-full mt-2 w-64 rounded-tile border border-line bg-white p-1.5">
+              className="absolute left-0 top-full mt-2 w-64 rounded-2xl bg-white p-1.5 shadow-[0_8px_24px_rgba(22,33,62,0.12)] ring-1 ring-line/70">
               {courses.map((c) => (
                 <li key={c.slug}>
                   <Link href={`/courses/${c.slug}`} aria-current={isActive(`/courses/${c.slug}`) ? "page" : undefined}
-                    className="flex items-center gap-3 rounded px-3 py-2.5 text-[15px] font-semibold text-ink hover:bg-azul-soft aria-[current=page]:text-azul">
-                    <span aria-hidden className={`h-4 w-1 rounded-full ${c.lang === "es" ? "bg-azul" : "bg-azafran"}`} />
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-[15px] font-semibold text-ink hover:bg-azul-soft aria-[current=page]:text-azul">
+                    <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${c.lang === "es" ? "bg-azul" : "bg-azafran"}`} />
                     {c.name}
                   </Link>
                 </li>
@@ -143,13 +153,14 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
       </div>
 
       <div id={panelId} hidden={!menuOpen} onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMenuOpen(false); }}
-        className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-paper lg:hidden">
+        className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto bg-paper shadow-[0_8px_24px_rgba(22,33,62,0.10)] lg:hidden">
         <div className="wrap py-5">
           <p className="mb-2 text-sm font-semibold text-muted">{t("courses")}</p>
           <ul className="grid grid-cols-2 gap-2">
             {courses.map((c) => (
               <li key={c.slug}>
-                <Link href={`/courses/${c.slug}`} aria-current={isActive(`/courses/${c.slug}`) ? "page" : undefined} className={`block h-full rounded-tile border border-line border-l-[6px] bg-white px-3 py-3 text-[15px] font-bold ${c.lang === "es" ? "border-l-azul" : "border-l-azafran"}`}>
+                <Link href={`/courses/${c.slug}`} aria-current={isActive(`/courses/${c.slug}`) ? "page" : undefined} className="flex h-full items-center gap-2 rounded-2xl bg-white px-3.5 py-3 text-[15px] font-bold aria-[current=page]:text-azul">
+                  <span aria-hidden className={`h-2 w-2 shrink-0 rounded-full ${c.lang === "es" ? "bg-azul" : "bg-azafran"}`} />
                   {c.name}
                 </Link>
               </li>

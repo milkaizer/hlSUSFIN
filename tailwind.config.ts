@@ -18,7 +18,9 @@ export default {
         sans: ["Pretendard Variable", "Pretendard", "-apple-system", "BlinkMacSystemFont", "Apple SD Gothic Neo", "Malgun Gothic", "sans-serif"],
       },
       maxWidth: { page: "72rem", prose: "40rem" },
-      borderRadius: { tile: "6px" },
+      // tile: 실무 UI(관리자, My Class). card: 공개 페이지 쇼케이스 카드. pill: 보조 알약 버튼
+      borderRadius: { tile: "6px", card: "24px", pill: "9999px" },
+      boxShadow: { hairline: "0 1px 0 rgba(0,0,0,0.05)" },
     },
   },
   plugins: [],

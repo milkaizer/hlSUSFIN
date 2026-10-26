@@ -5,6 +5,7 @@ import { Link } from "@/i18n/routing";
 import { categories, getCategory } from "@/content/categories";
 import { CourseTile } from "@/components/home/CourseTiles";
 import { Check } from "@/components/ui/Icons";
+import { SpecList } from "@/components/SpecList";
 
 type Params = { params: Promise<{ locale: string; category: string }> };
 
@@ -23,21 +24,25 @@ export default async function CoursePage({ params }: Params) {
   const L = (v: { ko: string; en: string }) => (locale === "en" ? v.en : v.ko);
   const LL = (v: { ko: string[]; en: string[] }) => (locale === "en" ? v.en : v.ko);
   const others = categories.filter((x) => x.slug !== c.slug);
+  const curriculum = LL(c.curriculum);
   return (
     <>
-      <div className={`border-b border-line bg-white border-t-[6px] ${c.lang === "es" ? "border-t-azul" : "border-t-azafran"}`}>
-        <div className="wrap py-10 sm:py-14">
-          <p className="text-sm font-semibold text-muted">{c.lang === "es" ? t("lang_es") : t("lang_ko")}</p>
+      <div className="bg-white">
+        <div className="wrap py-12 md:py-20">
+          <p className="inline-flex items-center gap-2 text-sm font-bold text-muted">
+            <span aria-hidden className={`h-2 w-2 rounded-full ${c.lang === "es" ? "bg-azul" : "bg-azafran"}`} />
+            {c.lang === "es" ? t("lang_es") : t("lang_ko")}
+          </p>
           <h1 className="h-page mt-1">{L(c.name)}</h1>
           <p className="lead mt-3">{L(c.short)}</p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link href={{ pathname: "/apply", query: { category: c.slug } }} className="btn-primary">{t("apply")}</Link>
-            <Link href="/pricing" className="btn-quiet">{t("seePricing")}</Link>
+            <Link href="/pricing" className="btn-pill">{t("seePricing")}</Link>
           </div>
         </div>
       </div>
-      <div className="wrap grid gap-10 py-12 lg:grid-cols-[1fr_20rem]">
-        <div className="space-y-10">
+      <div className="wrap grid gap-10 py-12 md:py-16 lg:grid-cols-[1fr_22rem] lg:gap-14">
+        <div className="space-y-12">
           <section>
             <h2 className="text-[20px] font-extrabold">{t("audience")}</h2>
             <p className="mt-3 max-w-prose text-[17px] leading-relaxed">{L(c.audience)}</p>
@@ -54,21 +59,25 @@ export default async function CoursePage({ params }: Params) {
             </ol>
           </section>
         </div>
-        <aside className="panel h-fit p-6">
-          <h2 className="text-[18px] font-extrabold">{t("includes")}</h2>
-          <ul className="mt-4 space-y-2.5 text-[15px]">
+        <aside className="show-card h-fit p-[2em]">
+          <SpecList locale={locale} rows={[
+            { key: "audience", label: t("specAudience"), value: L(c.audience) },
+            { key: "curriculum", label: t("specCurriculum"), value: t("unitCount", { count: curriculum.length }) },
+          ]} />
+          <h2 className="mt-[1.5em] border-t border-line pt-[1.25em] text-[1.125em] font-extrabold">{t("includes")}</h2>
+          <ul className="mt-[0.75em] space-y-[0.625em] text-[0.9375em]">
             {LL(c.includes).map((item) => (
-              <li key={item} className="flex items-start gap-2.5">
-                <span className="mt-0.5 shrink-0 text-ok"><Check /></span>
+              <li key={item} className="flex items-start gap-[0.625em]">
+                <span className="mt-[0.2em] shrink-0 text-ok"><Check className="h-[1em] w-[1em]" /></span>
                 <span>{item}</span>
               </li>
             ))}
           </ul>
         </aside>
       </div>
-      <section className="wrap pb-4">
+      <section className="wrap pb-4 pt-8 md:pt-12">
         <h2 className="h-section">{t("other")}</h2>
-        <ul className="mt-6 grid gap-4 md:grid-cols-3">
+        <ul className="mt-8 grid gap-5 md:grid-cols-3 md:gap-6">
           {others.map((o) => (
             <li key={o.slug}><CourseTile c={o} locale={locale} /></li>
           ))}

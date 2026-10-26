@@ -17,10 +17,10 @@ export default async function PricingPage({ params }: { params: Promise<{ locale
   const tiers = await getTiers();
   return (
     <>
-      <PageHead title={t("title")} lead={t("lead")} />
-      <div className="wrap py-12">
+      <PageHead title={t("title")} lead={t("lead")} align="center" />
+      <div className="wrap">
         <TierCards tiers={tiers} locale={locale} withPayButtons />
-        <div className="mt-10 flex flex-col gap-3 border-t border-line pt-8 sm:flex-row sm:items-center sm:gap-5">
+        <div className="mt-12 flex flex-col items-center gap-3 text-center">
           <Link href="/apply" className="btn-primary">{t("useApply")}</Link>
           <p className="text-sm text-muted">{t("note")}</p>
         </div>

@@ -23,3 +23,6 @@ local-stack/mail/
 # 테스트 스크립트가 매번 다시 쓰는 빌드 로그
 logs/build/*-build*.log
 logs/build/app-build*.log
+
+# prep-house 캡처는 제3자 저작물이라 저장소에 올리지 않는다 (로컬 참고용)
+logs/build/screens/prephouse/

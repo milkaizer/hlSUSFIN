@@ -4,7 +4,8 @@
 
 | Phase | 상태 | 수용 테스트 | 비고 |
 |---|---|---|---|
-| P1 공개 페이지 | 기능 완료, 독립 검증 완료 | 13.1 17/17 PASS (`bash scripts/test-p1.sh`) | 검증 결함 D1~D10 수정. prep-house 디자인 벤치마킹은 Cowork 에서 (NEXT_STEPS Step A) |
+| P1 공개 페이지 | 기능 완료, 독립 검증 완료 | 13.1 17/17 PASS (`bash scripts/test-p1.sh`) | 검증 결함 D1~D10 수정 |
+| Step A prep-house 벤치마킹 | 완료, 독립 검증 13/13 PASS | 13.1 17/17 PASS, tsc, lint, build 오류 0 | 분석 `logs/build/benchmark-prephouse.md`, 전후 캡처 `logs/build/screens/before`, `after`, `compare` (390·1280). 섹션 순서 유지, 테스트 기대값 변경 없음 |
 | P2 DB | 완료 | 부록 C 60/60, 앱 수준 37/37, 보안 25/25 PASS (`npm run test:db`) | 0002(관리자 함수), 0003(보안 보강) 추가 |
 | P3 로그인·세션 | 구현 완료, 독립 검증 결함 수정, E2E 대기 | `tests/e2e/p3-auth.spec.ts` (실제 Supabase 필요) | |
 | P4 강의·수강신청 | 구현 완료, 독립 검증 결함 수정, E2E 대기 | `tests/e2e/p4-courses.spec.ts` | |
@@ -27,14 +28,13 @@
 ## 이 세션에서 막힌 것
 - 실제 Supabase 가 없어 P3~P7 E2E 를 실행하지 못함. 로컬 대체 스택(Supabase Auth, PostgREST 바이너리)은 실행 권한이 거부됨.
 - 네트워크 정책이 `*.supabase.co`, `api.cal.com`, `vercel.com`, `www.prep-house.co.kr` 을 막음.
-- GitHub push 403. 커밋은 로컬에만 있음.
+- (클라우드 세션) GitHub push 403. Windows 로컬 세션에서 push 재시도.
 
 ## 사람이 할 일
 `docs/SETUP.md` 참고. 요약:
 1. GitHub 다시 연결, 저장소에 Claude GitHub App 설치 (push 용)
 2. Supabase 프로젝트 생성, SQL 3개 실행, Auth 설정, Google OAuth
 3. 키를 `.env.local`(본인 PC) 또는 클라우드 환경변수 + `<ref>.supabase.co` 도메인 허용(새 세션)
-4. prep-house 벤치마킹 자료: 도메인 허용 또는 스크린샷 업로드
 
 ## 알려진 문제
 - HANDOFF 15장 그대로.

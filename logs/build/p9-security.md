@@ -1,4 +1,4 @@
-# P9 Adversarial Security Review — Vita Language
+# P9 Adversarial Security Review, Vita Language
 
 Read-only review. Scope: middleware, route handlers, server actions, pages, lib, and the DB schema
 (`0001_init.sql` + `0002_admin_functions.sql`). Attacker profiles: (a) no account, (b) pending student,
@@ -22,7 +22,7 @@ quiz-integrity / answer-retention gaps.
 
 ## 1. [HIGH] Any approved student can publish a site-wide "notice" (defacement + phishing to all visitors incl. anonymous)
 
-- Object: policy `posts_update` — `supabase/migrations/0001_init.sql:658-659`. Rendering sinks:
+- Object: policy `posts_update`, `supabase/migrations/0001_init.sql:658-659`. Rendering sinks:
   `lib/data/public.ts:26-36` (`getNotices`/`getLatestNotice`), `components/home/NoticeBanner.tsx`,
   `app/[locale]/board/page.tsx:25,47-58`.
 - Attacker: approved student with any one category (profile c).
@@ -41,7 +41,7 @@ quiz-integrity / answer-retention gaps.
   `getLatestNotice`-style query returned the forged row as the newest notice:
   `61000000-… | [공지] 계정 재인증 필요 | author 00000000-…0001 | 2099-01-01`. Direct insert of a `notice`
   by a student is correctly rejected ("new row violates row-level security policy"), so the UPDATE path is
-  the only hole — but it is enough.
+  the only hole, but it is enough.
 - Impact: any student can post a banner message visible on the home page and board to every visitor,
   including logged-out users, with a future timestamp to keep it pinned. Natural use is a credential-phishing
   "log in again here" notice. Also allows moving one's own post into a category the student has no access to.
@@ -54,7 +54,7 @@ quiz-integrity / answer-retention gaps.
 
 - File: `app/api/cal/webhook/route.ts:65-105`; credit math `call_credits_for` `0001_init.sql:504-514`;
   rendering `app/[locale]/myclass/page.tsx:292-340`, `app/[locale]/admin/calls/page.tsx:44-55`.
-- Attacker: any student (or outsider who can create a Cal.com booking). The signature is **not** forged —
+- Attacker: any student (or outsider who can create a Cal.com booking). The signature is **not** forged , 
   the attacker makes a genuine booking through the public Cal.com link, which causes Cal.com to send a
   correctly-signed webhook. The attacker controls the booking's `metadata[user_id]`, `metadata[category]`,
   `metadata[videoCallUrl]`, and attendee email (all set via the public booking URL / form; `lib/cal.ts`
@@ -75,7 +75,7 @@ quiz-integrity / answer-retention gaps.
   (that part is reasoned from `route.ts`), but the DB effect the handler produces is confirmed.
 - Impact: one student can zero out another student's monthly conversation-call credits, create bookings
   attributed to a classmate, and (see #6) attach an attacker-chosen "Meet" link that the victim and admin
-  see. For a former/expired student the booking is marked `over_limit` (credits 0) — admin noise rather
+  see. For a former/expired student the booking is marked `over_limit` (credits 0), admin noise rather
   than drain, but still forged attribution.
 - Minimal fix: only trust `metadata.user_id` when the booking's attendee email also matches that profile's
   email; drop the email-only fallback, or when they disagree store `user_id=null` (unmatched) so the admin
@@ -119,7 +119,7 @@ quiz-integrity / answer-retention gaps.
 - Impact: a student gets two (or more) attempts on a capped quiz. Chained with #3: open attempt A and B,
   submit A empty, read answers via `attempt_result(A)`, then submit B with the correct answers → full marks
   on a "single-attempt timed mock". Defeats the one place answer-secrecy matters.
-- Minimal fix: serialize per user+quiz — e.g. `perform pg_advisory_xact_lock(hashtextextended(p_quiz::text, …), hashtext(auth.uid()::text))`
+- Minimal fix: serialize per user+quiz, e.g. `perform pg_advisory_xact_lock(hashtextextended(p_quiz::text, …), hashtext(auth.uid()::text))`
   at the top of `start_attempt`, or add a partial unique index limiting in-progress attempts and count under
   `for update`.
 
@@ -133,7 +133,7 @@ quiz-integrity / answer-retention gaps.
   WHATWG URL parser the browser strips the tab, turning it into the protocol-relative `//evil.example/phish`,
   which resolves to `https://evil.example/phish`.
 - Reproduced: `safeNext("/\t/evil.example/phish")` returns the value unchanged, and
-  `new URL(that, "https://vita.example/login").href === "https://vita.example/login"`? No — a Node http
+  `new URL(that, "https://vita.example/login").href === "https://vita.example/login"`? No, a Node http
   server emitting that `Location` sends `"/\t/evil.example/phish"`, and resolving it as a browser does yields
   `https://evil.example/phish` (confirmed via `new URL`). The `/auth/callback` path is **not** affected
   because it builds an absolute `${origin}${next}`, which keeps the host as the site.
@@ -151,7 +151,7 @@ quiz-integrity / answer-retention gaps.
 - Attacker: as in #2, a booker controlling `metadata.videoCallUrl` (or `videoCallData.url`).
 - Cause: `call_bookings.meet_url` is validated only as "some https URL", not as a Google Meet URL. The
   stricter `isMeetUrl` is applied only to the admin live-session form (`app/[locale]/admin/actions.ts:342`).
-- Impact: the victim's "회화 콜 — Meet 링크" button and the admin calls page link to an attacker-chosen https
+- Impact: the victim's "회화 콜, Meet 링크" button and the admin calls page link to an attacker-chosen https
   site (phishing). `target="_blank" rel="noopener noreferrer"` is set, so no window.opener issue, but the URL
   is attacker-controlled and labeled as the meeting link.
 - Minimal fix: validate booking `meet_url` with `isMeetUrl` (meet.google.com only) before storing/rendering,
@@ -168,7 +168,7 @@ quiz-integrity / answer-retention gaps.
   bumped second device can still use the Q&A board. Reproduced indirectly: as a student over PostgREST I read
   lessons/entitlements and ran `quiz_questions` with no cookie check involved.
 - Judged against the stated goal (deter casual sharing among ~10 students): acceptable. Video watching lives
-  under `/myclass/lesson/*`, which **is** protected, so a casual sharer using the real UI is logged out — the
+  under `/myclass/lesson/*`, which **is** protected, so a casual sharer using the real UI is logged out, the
   deterrent works for the common case. The bypass requires deliberately scripting Supabase calls.
 - Also note the normal "steady-state" cost: the middleware does `auth.getUser()` + a `user_sessions` select on
   every protected navigation; fine at this scale.
@@ -192,19 +192,19 @@ quiz-integrity / answer-retention gaps.
   `update_my_profile` truncates to 100, but the initial insert does not. Anyone signing up directly against
   the public auth API (not just via the UI, which only uses OTP/OAuth) can set an arbitrary, very long
   `full_name`. Reproduced: a 50,000-char metadata name was stored in full (`char_length = 50013`). Output is
-  React-escaped everywhere it is shown (admin members list, board author), so no XSS — this is a stored-data
+  React-escaped everywhere it is shown (admin members list, board author), so no XSS, this is a stored-data
   hygiene / minor display issue only.
 - Minimal fix: `left(…, 100)` in `handle_new_user`, same as `update_my_profile`.
 
 ## 10. [INFO] Webhook replay, duplicate emails, and misc
 
 - `app/api/cal/webhook/route.ts`: signature is HMAC over the raw body with `timingSafeEqual` (good), 503 when
-  the secret is unset (confirmed `503 not_configured`), 512 KB size cap, generic error bodies — all fine.
+  the secret is unset (confirmed `503 not_configured`), 512 KB size cap, generic error bodies, all fine.
   There is no timestamp/nonce, so a captured signed body can be replayed, but the upsert is idempotent on
   `cal_uid` and preserves non-cancelled status (`:88-92`), and cancelled replays just re-cancel; impact is
   negligible. `profiles.email` has no unique constraint, so the attendee-email fallback (`:75-78`,
-  `limit(1).maybeSingle()`) is ambiguous if two profiles share an email — another reason to prefer #2's fix.
-- Payment webhook returns 501 on POST and 405 on GET (confirmed) — matches spec, no finding.
+  `limit(1).maybeSingle()`) is ambiguous if two profiles share an email, another reason to prefer #2's fix.
+- Payment webhook returns 501 on POST and 405 on GET (confirmed), matches spec, no finding.
 - `SECURITY DEFINER` hygiene is good across the board: every definer function sets `search_path = public`,
   and the privileged ones gate on `is_admin()` / `auth.role()='service_role'` (`grant_access`,
   `approve_request`, `admin_*`, `grade_essay`). `call_credits_for` execute is correctly revoked from
@@ -221,11 +221,11 @@ quiz-integrity / answer-retention gaps.
   evil.example` action POST was aborted with "Invalid Server Actions request"); same-origin CSRF on server
   actions is mitigated by that check plus `SameSite=Lax` session cookies. `/auth/signout` is POST-only.
 - `next-intl` routing note (not a vuln): percent-encoded protected paths like `/my%63lass` keep their encoded
-  form in `nextUrl.pathname`, so the app's `PROTECTED` regex does not match them in isolation — but the
+  form in `nextUrl.pathname`, so the app's `PROTECTED` regex does not match them in isolation, but the
   committed build still routes them to the real page, and the page-level `requireUser`/`requireAdmin` guards
   run server-side regardless. Confirmed with `next start`: `/my%63lass`, `/%6Dyclass/lesson/<uuid>`,
   `/%61dmin` all 307-redirect to `/login` (and `/admin` would 403 via `requireAdmin`). So the middleware
-  session-token check can be skipped by encoding, but **authorization is not** — it lives in the page guards
+  session-token check can be skipped by encoding, but **authorization is not**, it lives in the page guards
   and RLS. This only weakens the device-binding deterrent (#7), it does not expose data.
 
 ---
@@ -241,7 +241,7 @@ quiz-integrity / answer-retention gaps.
   property of the external Cal.com flow, not executed here).
 
 ### Suggested fix priority
-1. #1 `posts_update` WITH CHECK (restrict kind/category/created_at/is_private) — cheap, stops site-wide
+1. #1 `posts_update` WITH CHECK (restrict kind/category/created_at/is_private), cheap, stops site-wide
    defacement/phishing.
 2. #2 webhook user attribution (require email↔user_id agreement; drop email-only fallback) and #6 (meet_url
    = Meet only).

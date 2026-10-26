@@ -1,0 +1,45 @@
+   ▲ Next.js 15.5.28
+   - Experiments (use with caution):
+     ✓ authInterrupts
+
+   Creating an optimized production build ...
+ ✓ Compiled successfully in 3.0s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/6) ...
+   Generating static pages (1/6) 
+   Generating static pages (2/6) 
+   Generating static pages (4/6) 
+ ✓ Generating static pages (6/6)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /_not-found                            137 B         103 kB
+├ ƒ /[locale]                            1.86 kB         108 kB
+├ ƒ /[locale]/[...rest]                    137 B         103 kB
+├ ƒ /[locale]/admin                        137 B         103 kB
+├ ƒ /[locale]/apply                      2.08 kB         108 kB
+├ ƒ /[locale]/board                      2.08 kB         108 kB
+├ ƒ /[locale]/courses/[category]         1.86 kB         108 kB
+├ ƒ /[locale]/live                       2.08 kB         108 kB
+├ ƒ /[locale]/login                      69.1 kB         193 kB
+├ ƒ /[locale]/myclass                    1.86 kB         108 kB
+├ ƒ /[locale]/pricing                    1.86 kB         108 kB
+├ ƒ /[locale]/privacy                    1.86 kB         108 kB
+├ ƒ /[locale]/reviews                    1.86 kB         108 kB
+├ ƒ /[locale]/terms                      1.86 kB         108 kB
+├ ƒ /api/payments/webhook                  137 B         103 kB
+├ ƒ /auth/callback                         137 B         103 kB
+└ ƒ /auth/signout                          137 B         103 kB
++ First Load JS shared by all             103 kB
+  ├ chunks/255-7dbcc13594e23a22.js       46.5 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          1.94 kB
+
+
+ƒ Middleware                              127 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+

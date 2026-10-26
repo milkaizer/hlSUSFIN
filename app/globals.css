@@ -1,0 +1,49 @@
+@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-paper text-ink antialiased;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+  h1, h2, h3 { @apply text-ink; letter-spacing: -0.02em; }
+  :focus-visible { outline: 3px solid #E9A800; outline-offset: 2px; }
+  a { text-underline-offset: 3px; }
+  [id] { scroll-margin-top: 5rem; }
+}
+
+@layer components {
+  .wrap { @apply mx-auto w-full max-w-page px-5 sm:px-8; }
+  .btn { @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-tile px-5 text-[15px] font-semibold transition-colors; }
+  .btn-primary { @apply btn bg-azul text-white hover:bg-azul-deep; }
+  .btn-quiet { @apply btn border border-line bg-white text-ink hover:border-azul hover:text-azul; }
+  .btn-ghost { @apply btn text-azul hover:bg-azul-soft; }
+  .btn-danger { @apply btn border border-warn/40 bg-white text-warn hover:bg-warn hover:text-white; }
+  .btn-sm { @apply min-h-9 px-3 text-sm; }
+  .btn[disabled], .btn[aria-disabled="true"] { @apply cursor-not-allowed border-line bg-line/60 text-muted hover:bg-line/60 hover:text-muted; }
+  .field { @apply block w-full rounded-tile border border-line bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-muted/70 focus:border-azul focus:outline-none; }
+  .field:disabled { @apply cursor-not-allowed bg-paper text-muted; }
+  .label { @apply mb-1.5 block text-sm font-semibold text-ink; }
+  .panel { @apply rounded-tile border border-line bg-white; }
+  .h-page { @apply text-[28px] font-extrabold leading-tight sm:text-[36px]; }
+  .h-section { @apply text-[22px] font-extrabold leading-snug sm:text-[28px]; }
+  .lead { @apply max-w-prose text-[16px] leading-relaxed text-muted; }
+  .badge { @apply inline-flex items-center whitespace-nowrap rounded px-2 py-0.5 text-xs font-semibold; }
+  .link { @apply font-semibold text-azul underline-offset-4 hover:underline; }
+  .table-wrap { @apply w-full overflow-x-auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}

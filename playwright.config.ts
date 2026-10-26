@@ -39,8 +39,10 @@ const appServers = [
 
 export default defineConfig({
   testDir: "tests/e2e",
-  timeout: 60_000,
-  expect: { timeout: 10_000 },
+  // app 은 실제 Supabase(서울)에 붙는다. 개발 PC(스페인)에서 돌리면 DB 왕복이 회당 0.4~2초라
+  // 서버 액션 한 번(미들웨어, 권한 확인, 쓰기, 다시 그리기)이 10초를 넘기기도 해서 기다림을 늘린다
+  timeout: suite === "app" ? 180_000 : 60_000,
+  expect: { timeout: suite === "app" ? 30_000 : 10_000 },
   fullyParallel: false,
   workers: 1,
   reporter: [["list"], ["json", { outputFile: "test-results/results.json" }]],

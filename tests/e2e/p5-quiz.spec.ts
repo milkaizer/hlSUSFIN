@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { adminDb, cleanup, configured, grant, makeUser, newUserPage, TAG, userDb, type TestUser } from "./helpers/supa";
+import { adminDb, cleanup, configured, grant, makeUser, newUserPage, submitAction, TAG, userDb, type TestUser } from "./helpers/supa";
 
 // 13.5 P5 문제·모의고사 (실제 Supabase)
 test.describe.configure({ mode: "serial" });
@@ -34,8 +34,9 @@ async function addQuestion(page: Page, q: { type: string; prompt: string; choice
   await form.locator('input[name="points"]').fill(String(q.points ?? 1));
   const quizId = page.url().match(/quizzes\/([0-9a-f-]{36})/)![1];
   const before = await questionCount(quizId);
-  await form.getByRole("button", { name: "문항 추가" }).click();
+  await submitAction(page, form.getByRole("button", { name: "문항 추가" }));
   await expect.poll(() => questionCount(quizId)).toBe(before + 1);
+  await expect(page.locator("[data-question]")).toHaveCount(before + 1);
   await expect(page.getByTestId("admin-ok")).toHaveText("추가했습니다.");
 }
 

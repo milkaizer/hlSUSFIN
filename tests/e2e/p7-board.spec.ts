@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { adminDb, cleanup, configured, grant, makeUser, newUserPage, TAG, userDb, type TestUser } from "./helpers/supa";
+import { adminDb, cleanup, configured, grant, makeUser, newUserPage, submitAction, TAG, userDb, type TestUser } from "./helpers/supa";
 
 // 13.7 P7 게시판·합격자 (실제 Supabase)
 test.describe.configure({ mode: "serial" });
@@ -124,8 +124,10 @@ test("13.7-6a 합격자 입력 (관리자 화면은 플래그와 무관)", async
     await row.locator('input[name="masked_name"]').fill("김**");
     await row.locator('input[name="headline"]').fill(headline);
     if (published) await row.locator('input[name="published"]').check();
-    await row.getByRole("button", { name: "합격자 추가" }).click();
+    const rows = await a.page.locator("[data-result-row]").count();
+    await submitAction(a.page, row.getByRole("button", { name: "합격자 추가" }));
     await expect.poll(async () => (await adminDb().from("results").select("id").eq("headline", headline)).data?.length ?? 0).toBe(1);
+    await expect(a.page.locator("[data-result-row]")).toHaveCount(rows + 1);
   };
   await add(`${TAG} TOPIK 6급`, true);
   await add(`${TAG} 비공개 성과`, false);

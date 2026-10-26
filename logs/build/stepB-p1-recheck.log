@@ -1,0 +1,27 @@
+== tsc
+== lint
+== build .next-p1 (flags off)
+== build .next-flags (flags on)
+== playwright
+
+Running 17 tests using 1 worker
+
+  ok  1 [p1] › tests\e2e\p1-public.spec.ts:15:5 › 13.1-1 홈 200, 섹션 순서 (454ms)
+  ok  2 [p1] › tests\e2e\p1-public.spec.ts:23:5 › 13.1-2 /en 메뉴와 히어로 영어 (324ms)
+  ok  3 [p1] › tests\e2e\p1-public.spec.ts:35:5 › 13.1-3 과목 4개 200, unknown 404 (606ms)
+  ok  4 [p1] › tests\e2e\p1-public.spec.ts:46:5 › 13.1-4 요금제: 결제 버튼 3개 disabled, 준비 중 3개 (328ms)
+  ok  5 [p1] › tests\e2e\p1-public.spec.ts:56:5 › 13.1-5 플래그 false: 합격자·후기 없음, /reviews 404 (370ms)
+  ok  6 [p1] › tests\e2e\p1-public.spec.ts:68:5 › 13.1-7 푸터에 사업자 정보 없음 (311ms)
+  ok  7 [p1] › tests\e2e\p1-public.spec.ts:75:5 › 13.1-8 결제 웹훅 501 (27ms)
+  ok  8 [p1] › tests\e2e\p1-public.spec.ts:81:5 › 13.1-9 390px 가로 스크롤 없음 (854ms)
+  ok  9 [p1] › tests\e2e\p1-public.spec.ts:95:5 › 13.1-10 저장소 전체 U+2014 0건 (105ms)
+  ok 10 [p1] › tests\e2e\p1-public.spec.ts:114:5 › 13.1-12 /apply 비로그인: 폼 비활성, 로그인 링크 (332ms)
+  ok 11 [p1] › tests\e2e\p1-public.spec.ts:128:5 › 13.1-13 /myclass 비로그인은 로그인으로 (332ms)
+  ok 12 [p1] › tests\e2e\p1-public.spec.ts:137:5 › 13.1-14 키보드: 헤더 메뉴, 드롭다운 Enter·Esc, 포커스 링 (465ms)
+  ok 13 [p1] › tests\e2e\p1-public.spec.ts:170:5 › P1 검증 D1: 영어에서 한국어로 바꾸면 한국어 유지 (539ms)
+  ok 14 [p1] › tests\e2e\p1-public.spec.ts:185:5 › P1 검증 D2: 비활성 버튼은 회색 (261ms)
+  ok 15 [p1] › tests\e2e\p1-public.spec.ts:193:5 › 보안 헤더 (19ms)
+  ok 16 [p1] › tests\e2e\p1-public.spec.ts:202:5 › 스크린샷: 홈, 과목, 요금제 390·1280 (1.2s)
+  ok 17 [p1-flags] › tests\e2e\p1-flags.spec.ts:4:5 › 13.1-6 플래그 true: 빈 상태 문구, 콘솔 오류 없음 (675ms)
+
+  17 passed (14.9s)

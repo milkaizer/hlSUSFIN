@@ -34,6 +34,10 @@ export async function middleware(request: NextRequest) {
   const cookieToken = request.cookies.get(SESSION_COOKIE)?.value;
   const { data } = await supabase.from("user_sessions").select("session_token").eq("user_id", user.id).maybeSingle();
   if (!cookieToken || !data || data.session_token !== cookieToken) {
+    // 링크 미리 가져오기(prefetch)는 사용자가 보지 않는 요청이라 쿠키를 지우지 않는다.
+    // 여기서 지우면 다음 이동 때 로그아웃 상태로만 보여 other_device 안내가 사라진다 (13.3-2).
+    // 페이지와 서버 액션은 getViewer 가 같은 비교로 막는다
+    if (isPrefetch(request)) return response;
     await supabase.auth.signOut({ scope: "local" });
     // 로그인 화면이면 이동 없이 이 기기 세션만 정리 (리다이렉트 반복 방지)
     if (LOGIN.test(decoded)) {
@@ -56,6 +60,13 @@ export async function middleware(request: NextRequest) {
     maxAge: SESSION_MAX_AGE,
   });
   return response;
+}
+
+// App Router 링크 prefetch 와 브라우저 수준 prefetch
+function isPrefetch(request: NextRequest) {
+  const h = request.headers;
+  if (h.has("next-router-prefetch") || h.has("x-middleware-prefetch")) return true;
+  return /prefetch/i.test(`${h.get("purpose") ?? ""} ${h.get("sec-purpose") ?? ""}`);
 }
 
 export const config = {

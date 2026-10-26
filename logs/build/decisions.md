@@ -118,3 +118,6 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - Redirect URLs: `http://localhost:3000/auth/callback`, `http://localhost:3001/auth/callback`(test-app.sh 의 플래그 빌드). Site URL 은 기본값 `http://localhost:3000`.
 - 메일 템플릿(SETUP 1-6) 은 건너뜀: Supabase 가 이제 사용자 SMTP 를 연결해야 템플릿을 고칠 수 있게 함. 기본 템플릿이면 매직링크는 요청한 같은 브라우저에서 열어야 함(로그인 화면 안내문 있음). Supabase 기본 메일은 시간당 발송 수가 아주 적어서 학생 초대 전(Step E)에 SMTP(예: Resend) 연결이 필요.
 - 키는 레거시 anon, service_role 을 씀(`@supabase/ssr` 0.5.2 기준으로 검증된 방식). 새 publishable/secret 키 전환은 나중 과제.
+- 미들웨어는 링크 prefetch 요청에서 세션 토큰이 달라도 로그아웃과 쿠키 삭제를 하지 않음. 백그라운드 요청이 쿠키를 지우면 다음 이동에서 other_device 안내 없이 일반 로그인 화면으로 가서(13.3-2). 페이지와 서버 액션은 getViewer 가 같은 비교로 막으므로 prefetch 헤더로 우회할 수 없음.
+- 실제 Supabase E2E(app)는 기다림을 expect 30초, 테스트 180초로 늘림. 개발 PC 에서 서울 DB 왕복이 회당 0.4~2초라 서버 액션 한 번이 10초를 넘김. 운영은 Vercel icn1 과 같은 리전이라 해당 없음.
+- 같은 폼을 연달아 제출하는 E2E 단계는 제출 응답과 화면 행 수 증가까지 기다린 뒤 다음 입력을 시작함(submitAction). 앞 제출의 폼 초기화가 뒤에 입력한 값을 덮어쓰는 경쟁 때문. 앱 코드 문제는 아님(공개 목록의 published 필터는 이미 있음).

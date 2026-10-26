@@ -1,6 +1,6 @@
 import { createHmac } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import type { Browser, BrowserContext, Page } from "@playwright/test";
+import type { Browser, BrowserContext, Locator, Page } from "@playwright/test";
 
 // 실제 Supabase 프로젝트로 도는 E2E 공용 도구 (P3~P7)
 // 테스트 사용자는 service role 로 만들고, 매직링크 token_hash 로 /auth/callback 에 바로 들어간다 (메일 불필요)
@@ -51,6 +51,15 @@ export async function newUserPage(browser: Browser, user: TestUser, next = "/myc
   page.on("dialog", (d) => d.accept());
   await loginAs(page, user, next);
   return { context, page };
+}
+
+// 서버 액션 폼 제출 후 응답이 올 때까지 기다린다. 화면 반영은 호출한 쪽이 행 수 등으로 확인한다.
+// DB 반영만 보고 다음 입력을 시작하면 앞 제출의 폼 초기화가 뒤늦게 덮어써서 같은 폼을 연달아 쓰는 단계가 흔들린다
+export async function submitAction(page: Page, button: Locator) {
+  // JS 준비 전 클릭이면 서버 액션이 일반 폼 POST 로 가므로 POST 응답이면 모두 본다
+  const res = page.waitForResponse((r) => r.request().method() === "POST", { timeout: 60_000 });
+  await button.click();
+  await res;
 }
 
 // 학생 권한으로 REST 를 직접 호출하는 클라이언트 (RLS 확인용). 브라우저 세션과는 별개

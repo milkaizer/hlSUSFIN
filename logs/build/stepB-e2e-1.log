@@ -1,0 +1,187 @@
+== tsc
+== lint
+== build .next (연결, 플래그 off)
+== build .next-app-flags (연결, 플래그 on)
+== playwright (실행 ID r1793041977)
+
+Running 32 tests using 1 worker
+
+  ok  1 [app] › tests\e2e\p3-auth.spec.ts:19:5 › 13.3-1 신규 로그인: profiles pending, My Class 승인 대기 (11.9s)
+  x   2 [app] › tests\e2e\p3-auth.spec.ts:32:5 › 13.3-2 같은 계정 두 브라우저: 첫 브라우저는 other_device 로 (16.6s)
+  -   3 [app] › tests\e2e\p3-auth.spec.ts:53:5 › 13.3-3 학생 /admin 은 403
+  -   4 [app] › tests\e2e\p3-auth.spec.ts:61:5 › 13.3-4 관리자 /admin 진입
+  -   5 [app] › tests\e2e\p3-auth.spec.ts:70:5 › 13.3-5 관리자가 승인 + es-conversation basic 부여: 학생 My Class 에 그 과목만
+  -   6 [app] › tests\e2e\p3-auth.spec.ts:91:5 › 13.3-6 클라이언트 번들에 service role 키 없음
+  -   7 [app] › tests\e2e\p3-auth.spec.ts:109:5 › 13.3-7 next=//evil.com 은 내부 기본 경로로
+  x   8 [app] › tests\e2e\p4-courses.spec.ts:32:5 › 13.4-5a 관리자 강의·레슨 생성 (23.0s)
+  -   9 [app] › tests\e2e\p4-courses.spec.ts:63:5 › 13.4-1 수강신청 제출: pending, 관리자 목록 표시
+  -  10 [app] › tests\e2e\p4-courses.spec.ts:82:5 › 13.4-2 승인: grant_access 경유, My Class 즉시 반영
+  -  11 [app] › tests\e2e\p4-courses.spec.ts:101:5 › 13.4-3·4 레슨 워터마크, 완료 토글 유지
+  -  12 [app] › tests\e2e\p4-courses.spec.ts:116:5 › 13.4-6 min_tier standard 레슨: basic 학생 목록 미노출, 직접 URL 404
+  -  13 [app] › tests\e2e\p4-courses.spec.ts:127:5 › 13.4-5b 수정·비공개 전환이 학생 화면에 반영
+  -  14 [app] › tests\e2e\p4-courses.spec.ts:155:5 › 13.4-7 만료된 권한: My Class 에서 사라지고 레슨 404
+  x  15 [app] › tests\e2e\p5-quiz.spec.ts:54:5 › 관리자 문제 세트·문항 입력 (번호는 1부터) (33.7s)
+  -  16 [app] › tests\e2e\p5-quiz.spec.ts:80:5 › 13.5-6 응시 중 응답에 answer·explanation 없음 / 13.5-1·2 자동 채점 / 13.5-3 서술형
+  -  17 [app] › tests\e2e\p5-quiz.spec.ts:127:5 › 13.5-4 1분 모의고사 방치: 0초에 자동 제출과 안내
+  -  18 [app] › tests\e2e\p5-quiz.spec.ts:139:5 › 13.5-5 응시 횟수 1회 소진: 시작 버튼 없음, RPC 도 예외
+  ok 19 [app] › tests\e2e\p6-calls.spec.ts:51:5 › 13.6-1 basic: 회화콜 0회 안내, 라이브 목록 없음 (14.6s)
+  ok 20 [app] › tests\e2e\p6-calls.spec.ts:62:5 › 13.6-2·3·4·5 standard: 2회, 예약 링크 metadata, 웹훅 기록·재전송·취소 (20.8s)
+  ok 21 [app] › tests\e2e\p6-calls.spec.ts:97:5 › 13.6-6 서명 틀림: 401, 기록 없음 (352ms)
+  ok 22 [app] › tests\e2e\p6-calls.spec.ts:106:5 › 13.6-7 크레딧 0 에서 예약: over_limit, 관리자 현황 카운트 증가 (20.5s)
+  ok 23 [app] › tests\e2e\p6-calls.spec.ts:128:5 › P9-2 metadata 서명이 틀리면 크레딧을 쓰지 않고 확인 필요 (3.7s)
+  ok 24 [app] › tests\e2e\p6-calls.spec.ts:141:5 › 13.6-8 라이브 링크: 3시간 전 숨김, 20분 전 입장하기 (28.7s)
+  ok 25 [app] › tests\e2e\p6-calls.spec.ts:157:5 › 13.6-9 캘린더: 점 표시, 시간대에 따라 날짜·시간이 바뀜 (18.5s)
+  ok 26 [app] › tests\e2e\p7-board.spec.ts:24:5 › 13.7-1 공지: 관리자 작성, 비로그인 열람, 홈 배너 (12.0s)
+  ok 27 [app] › tests\e2e\p7-board.spec.ts:43:5 › 13.7-2 권한 없는 과목 Q&A: 탭 없음, 직접 URL 권한 없음, REST 0행 (17.0s)
+  ok 28 [app] › tests\e2e\p7-board.spec.ts:58:5 › 13.7-3 비공개 질문: 작성자·관리자 외 0행 (37.1s)
+  ok 29 [app] › tests\e2e\p7-board.spec.ts:88:5 › 13.7-4 관리자 댓글: 강사 답변 배지, 목록 답변 완료 (31.4s)
+  ok 30 [app] › tests\e2e\p7-board.spec.ts:110:5 › 13.7-5 학생이 is_instructor=true 로 댓글: 트리거가 false 로 (5.0s)
+  ok 31 [app] › tests\e2e\p7-board.spec.ts:118:5 › 13.7-6a 합격자 입력 (관리자 화면은 플래그와 무관) (14.9s)
+  x  32 [app] › tests\e2e\p7-board.spec.ts:136:5 › 13.7-6b 플래그 true 빌드: 홈에 공개 항목만 (12.2s)
+
+
+  1) [app] › tests\e2e\p3-auth.spec.ts:32:5 › 13.3-2 같은 계정 두 브라우저: 첫 브라우저는 other_device 로 ──────────
+
+    Error: expect(page).toHaveURL(expected) failed
+
+    Expected pattern: /\/login\?reason=other_device$/
+    Received string:  "http://localhost:3000/login?next=%2Fmyclass"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "toHaveURL" with timeout 10000ms
+        23 × locator resolved to <html lang="ko">…</html>
+           - unexpected value "http://localhost:3000/login?next=%2Fmyclass"
+
+
+      36 |   await expect(b.page).toHaveURL(/\/myclass$/);
+      37 |   await a.page.goto("/myclass");
+    > 38 |   await expect(a.page).toHaveURL(/\/login\?reason=other_device$/);
+         |                        ^
+      39 |   await expect(a.page.getByTestId("login-reason")).toContainText("다른 기기에서 로그인되어");
+      40 |   // 두 번째 브라우저는 계속 사용 가능
+      41 |   await b.page.goto("/myclass");
+        at C:\VitaLanguage\tests\e2e\p3-auth.spec.ts:38:24
+
+    Error Context: test-results\p3-auth-13-3-2-같은-계정-두-브라우저-첫-브라우저는-other-device-로-app\error-context.md
+
+    Error Context: test-results\p3-auth-13-3-2-같은-계정-두-브라우저-첫-브라우저는-other-device-로-app\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\p3-auth-13-3-2-같은-계정-두-브라우저-첫-브라우저는-other-device-로-app\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\p3-auth-13-3-2-같은-계정-두-브라우저-첫-브라우저는-other-device-로-app\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  2) [app] › tests\e2e\p4-courses.spec.ts:32:5 › 13.4-5a 관리자 강의·레슨 생성 ──────────────────────────────
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: getByTestId('admin-ok')
+    Expected: "추가했습니다."
+    Timeout: 10000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toHaveText" getByTestId('admin-ok') with timeout 10000ms
+      - waiting for getByTestId('admin-ok')
+
+
+      37 |   await page.locator('input[name="published"]').check();
+      38 |   await page.getByRole("button", { name: "강의 만들기" }).click();
+    > 39 |   await expect(page.getByTestId("admin-ok")).toHaveText("추가했습니다.");
+         |                                              ^
+      40 |   courseId = page.url().match(/content\/([0-9a-f-]{36})/)![1];
+      41 |
+      42 |   const add = async (title: string, tier: string, video: string) => {
+        at C:\VitaLanguage\tests\e2e\p4-courses.spec.ts:39:46
+
+    Error Context: test-results\p4-courses-13-4-5a-관리자-강의·레슨-생성-app\error-context.md
+
+    Error Context: test-results\p4-courses-13-4-5a-관리자-강의·레슨-생성-app\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\p4-courses-13-4-5a-관리자-강의·레슨-생성-app\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\p4-courses-13-4-5a-관리자-강의·레슨-생성-app\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  3) [app] › tests\e2e\p5-quiz.spec.ts:54:5 › 관리자 문제 세트·문항 입력 (번호는 1부터) ────────────────────────────
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: 2
+    Received: 1
+
+    Call Log:
+    - Timeout 10000ms exceeded while waiting on the predicate
+
+      36 |   const before = await questionCount(quizId);
+      37 |   await form.getByRole("button", { name: "문항 추가" }).click();
+    > 38 |   await expect.poll(() => questionCount(quizId)).toBe(before + 1);
+         |                                                  ^
+      39 |   await expect(page.getByTestId("admin-ok")).toHaveText("추가했습니다.");
+      40 | }
+      41 |
+        at addQuestion (C:\VitaLanguage\tests\e2e\p5-quiz.spec.ts:38:50)
+        at C:\VitaLanguage\tests\e2e\p5-quiz.spec.ts:58:3
+
+    Error Context: test-results\p5-quiz-관리자-문제-세트·문항-입력-번호는-1부터--app\error-context.md
+
+    Error Context: test-results\p5-quiz-관리자-문제-세트·문항-입력-번호는-1부터--app\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\p5-quiz-관리자-문제-세트·문항-입력-번호는-1부터--app\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\p5-quiz-관리자-문제-세트·문항-입력-번호는-1부터--app\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4) [app] › tests\e2e\p7-board.spec.ts:136:5 › 13.7-6b 플래그 true 빌드: 홈에 공개 항목만 ─────────────────────
+
+    Error: expect(locator).not.toContainText(expected) failed
+
+    Locator: locator('[data-section="results"]')
+    Expected substring: not "E2E r1793041977 비공개 성과"
+    Received string: "합격과 성과E2E r1793041977 비공개 성과김**E2E r1793041977 TOPIK 6급김**"
+    Timeout: 10000ms
+
+    Call log:
+      - Expect "not toContainText" locator('[data-section="results"]') with timeout 10000ms
+      - waiting for locator('[data-section="results"]')
+        24 × locator resolved to <section class="wrap sec" data-section="results">…</section>
+           - unexpected value "합격과 성과E2E r1793041977 비공개 성과김**E2E r1793041977 TOPIK 6급김**"
+
+
+      139 |   const results = page.locator('[data-section="results"]');
+      140 |   await expect(results).toContainText(`${TAG} TOPIK 6급`);
+    > 141 |   await expect(results).not.toContainText(`${TAG} 비공개 성과`);
+          |                             ^
+      142 | });
+      143 |
+        at C:\VitaLanguage\tests\e2e\p7-board.spec.ts:141:29
+
+    Error Context: test-results\p7-board-13-7-6b-플래그-true-빌드-홈에-공개-항목만-app\error-context.md
+
+    Error Context: test-results\p7-board-13-7-6b-플래그-true-빌드-홈에-공개-항목만-app\error-context.md
+
+    attachment #3: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\p7-board-13-7-6b-플래그-true-빌드-홈에-공개-항목만-app\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\p7-board-13-7-6b-플래그-true-빌드-홈에-공개-항목만-app\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  4 failed
+    [app] › tests\e2e\p3-auth.spec.ts:32:5 › 13.3-2 같은 계정 두 브라우저: 첫 브라우저는 other_device 로 ───────────
+    [app] › tests\e2e\p4-courses.spec.ts:32:5 › 13.4-5a 관리자 강의·레슨 생성 ───────────────────────────────
+    [app] › tests\e2e\p5-quiz.spec.ts:54:5 › 관리자 문제 세트·문항 입력 (번호는 1부터) ─────────────────────────────
+    [app] › tests\e2e\p7-board.spec.ts:136:5 › 13.7-6b 플래그 true 빌드: 홈에 공개 항목만 ──────────────────────
+  14 did not run
+  14 passed (7.5m)

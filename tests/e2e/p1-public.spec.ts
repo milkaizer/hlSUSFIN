@@ -167,6 +167,29 @@ test("13.1-14 키보드: 헤더 메뉴, 드롭다운 Enter·Esc, 포커스 링",
   await expect(page).toHaveURL(/\/courses\/es-conversation$/);
 });
 
+test("P1 검증 D1: 영어에서 한국어로 바꾸면 한국어 유지", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/en/pricing");
+  await page.getByRole("navigation", { name: "Main menu" }).getByRole("link", { name: "한국어" }).click();
+  await expect(page).toHaveURL(/\/pricing$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+  await page.getByRole("navigation", { name: "주 메뉴" }).getByRole("link", { name: "공지·Q&A" }).click();
+  await expect(page).toHaveURL(/\/board$/);
+  await expect(page.locator("html")).toHaveAttribute("lang", "ko");
+  // 쿼리 유지
+  await page.goto("/apply?category=topik");
+  await page.getByRole("navigation", { name: "주 메뉴" }).getByRole("link", { name: "English" }).click();
+  await expect(page).toHaveURL(/\/en\/apply\?category=topik$/);
+});
+
+test("P1 검증 D2: 비활성 버튼은 회색", async ({ page }) => {
+  await page.goto("/apply");
+  const bg = await page.getByRole("button", { name: "수강신청 보내기" }).evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(bg).not.toBe("rgb(36, 67, 184)");
+  const cursor = await page.getByRole("button", { name: "수강신청 보내기" }).evaluate((el) => getComputedStyle(el).cursor);
+  expect(cursor).toBe("not-allowed");
+});
+
 test("보안 헤더", async ({ request }) => {
   const res = await request.get("/");
   const h = res.headers();

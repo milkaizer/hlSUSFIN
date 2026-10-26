@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useId, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/routing";
 import { Logo } from "@/components/Logo";
@@ -18,12 +19,16 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
   const t = useTranslations("nav");
   const locale = useLocale();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const otherLocale = locale === "ko" ? "en" : "ko";
+  // 언어를 바꿔도 쿼리(과목, next 등)는 유지
+  const switchHref = { pathname, query: Object.fromEntries(searchParams.entries()) };
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
   const dropRef = useRef<HTMLDivElement>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
+  const menuBtnRef = useRef<HTMLButtonElement>(null);
   const dropId = useId();
   const panelId = useId();
 
@@ -53,6 +58,7 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
         dropBtnRef.current?.focus();
       } else {
         setMenuOpen(false);
+        menuBtnRef.current?.focus();
       }
     };
     document.addEventListener("keydown", onKey);
@@ -108,7 +114,7 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
       </ul>
 
       <div className="ml-auto hidden items-center gap-1 lg:flex">
-        <Link href={pathname} locale={otherLocale} className="rounded-tile px-3 py-2 text-sm font-semibold text-muted hover:text-azul" hrefLang={otherLocale}>
+        <Link href={switchHref} locale={otherLocale} className="rounded-tile px-3 py-2 text-sm font-semibold text-muted hover:text-azul" hrefLang={otherLocale}>
           {t("language")}
         </Link>
         {isAdmin && <Link href="/admin" className={navLink} aria-current={isActive("/admin") ? "page" : undefined}>{t("admin")}</Link>}
@@ -129,20 +135,21 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
       {/* 모바일 */}
       <div className="ml-auto flex items-center gap-2 lg:hidden">
         <Link href="/apply" className="btn-primary btn-sm">{t("apply")}</Link>
-        <button type="button" className="btn-quiet btn-sm" aria-expanded={menuOpen} aria-controls={panelId}
+        <button ref={menuBtnRef} type="button" className="btn-quiet btn-sm" aria-expanded={menuOpen} aria-controls={panelId}
           onClick={() => setMenuOpen((v) => !v)} data-testid="menu-toggle">
           <MenuIcon open={menuOpen} />
           <span>{menuOpen ? t("close") : t("menu")}</span>
         </button>
       </div>
 
-      <div id={panelId} hidden={!menuOpen} className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-paper lg:hidden">
+      <div id={panelId} hidden={!menuOpen} onClick={(e) => { if ((e.target as HTMLElement).closest("a")) setMenuOpen(false); }}
+        className="absolute inset-x-0 top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto border-b border-line bg-paper lg:hidden">
         <div className="wrap py-5">
           <p className="mb-2 text-sm font-semibold text-muted">{t("courses")}</p>
           <ul className="grid grid-cols-2 gap-2">
             {courses.map((c) => (
               <li key={c.slug}>
-                <Link href={`/courses/${c.slug}`} className={`block h-full rounded-tile border border-line border-l-[6px] bg-white px-3 py-3 text-[15px] font-bold ${c.lang === "es" ? "border-l-azul" : "border-l-azafran"}`}>
+                <Link href={`/courses/${c.slug}`} aria-current={isActive(`/courses/${c.slug}`) ? "page" : undefined} className={`block h-full rounded-tile border border-line border-l-[6px] bg-white px-3 py-3 text-[15px] font-bold ${c.lang === "es" ? "border-l-azul" : "border-l-azafran"}`}>
                   {c.name}
                 </Link>
               </li>
@@ -150,17 +157,17 @@ export function NavBar({ courses, loggedIn, isAdmin, showReviews }: Props) {
           </ul>
           <ul className="mt-5 divide-y divide-line border-y border-line">
             {mainLinks.map((l) => (
-              <li key={l.href}><Link href={l.href} className="block py-3 text-[16px] font-semibold">{l.label}</Link></li>
+              <li key={l.href}><Link href={l.href} aria-current={isActive(l.href) ? "page" : undefined} className="block py-3 text-[16px] font-semibold aria-[current=page]:text-azul">{l.label}</Link></li>
             ))}
-            {isAdmin && <li><Link href="/admin" className="block py-3 text-[16px] font-semibold">{t("admin")}</Link></li>}
+            {isAdmin && <li><Link href="/admin" aria-current={isActive("/admin") ? "page" : undefined} className="block py-3 text-[16px] font-semibold aria-[current=page]:text-azul">{t("admin")}</Link></li>}
             {loggedIn ? (
-              <li><Link href="/myclass" className="block py-3 text-[16px] font-semibold">{t("myclass")}</Link></li>
+              <li><Link href="/myclass" aria-current={isActive("/myclass") ? "page" : undefined} className="block py-3 text-[16px] font-semibold aria-[current=page]:text-azul">{t("myclass")}</Link></li>
             ) : (
-              <li><Link href="/login" className="block py-3 text-[16px] font-semibold">{t("login")}</Link></li>
+              <li><Link href="/login" aria-current={isActive("/login") ? "page" : undefined} className="block py-3 text-[16px] font-semibold aria-[current=page]:text-azul">{t("login")}</Link></li>
             )}
           </ul>
           <div className="mt-5 flex items-center justify-between gap-3">
-            <Link href={pathname} locale={otherLocale} hrefLang={otherLocale} className="btn-quiet btn-sm">{t("language")}</Link>
+            <Link href={switchHref} locale={otherLocale} hrefLang={otherLocale} className="btn-quiet btn-sm">{t("language")}</Link>
             {loggedIn && (
               <form action="/auth/signout" method="post">
                 <input type="hidden" name="locale" value={locale} />

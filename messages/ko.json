@@ -89,7 +89,7 @@
     "book": "15분 콜 예약하기", "bookNotReady": "예약 링크가 아직 준비되지 않았습니다.", "upcoming": "다가오는 일정", "noUpcoming": "예정된 일정이 없습니다.",
     "call": "회화 콜", "liveClass": "라이브", "join": "입장하기", "linkSoon": "링크는 시작 30분 전에 열립니다",
     "today": "오늘", "prev": "이전 달", "next": "다음 달", "localTime": "시간은 이 기기 기준으로 표시됩니다.",
-    "noQuestions": "남긴 질문이 없습니다.", "goBoard": "Q&A로 이동", "applyMore": "다른 과목 수강신청", "applyNow": "수강신청 하기",
+    "noQuestions": "남긴 질문이 없습니다.", "goBoard": "Q&A로 이동", "applyMore": "다른 과목 수강신청", "applyNow": "수강신청하기",
     "noLessons": "아직 등록된 레슨이 없습니다.", "thisMonth": "이번 달 일정", "noThisMonth": "이번 달 일정이 없습니다.",
     "upcomingLive": "다가오는 라이브", "upcomingCalls": "다가오는 예약", "meetLink": "Meet 입장", "overLimit": "횟수 초과로 강사 확인 중",
     "prevLesson": "이전 레슨", "nextLesson": "다음 레슨", "backToMyclass": "My Class로", "unlimited": "횟수 제한 없음", "noLimit": "시간 제한 없음",

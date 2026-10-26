@@ -27,7 +27,9 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   const { locale } = await params;
   if (!routing.locales.includes(locale as Locale)) notFound();
   setRequestLocale(locale);
-  const messages = await getMessages();
+  // 클라이언트 컴포넌트가 쓰는 네임스페이스만 보낸다 (NavBar, LoginForm, MonthCalendar, QuizRunner)
+  const all = await getMessages();
+  const messages = { nav: all.nav, login: all.login, myclass: all.myclass, quiz: all.quiz };
   const t = await getTranslations("nav");
   return (
     <html lang={locale}>

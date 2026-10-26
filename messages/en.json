@@ -91,7 +91,7 @@
     "today": "Today", "prev": "Previous month", "next": "Next month", "localTime": "Times are shown in this device's time zone.",
     "noQuestions": "You have not posted any questions.", "goBoard": "Go to Q&A", "applyMore": "Apply for another course", "applyNow": "Apply now",
     "noLessons": "No lessons have been added yet.", "thisMonth": "This month", "noThisMonth": "Nothing scheduled this month.",
-    "upcomingLive": "Upcoming live classes", "upcomingCalls": "Upcoming calls", "meetLink": "Join on Meet", "overLimit": "Over your monthly limit, the instructor will check",
+    "upcomingLive": "Upcoming live classes", "upcomingCalls": "Upcoming calls", "meetLink": "Join on Meet", "overLimit": "Over your monthly limit. The instructor will check it.",
     "prevLesson": "Previous lesson", "nextLesson": "Next lesson", "backToMyclass": "Back to My Class", "unlimited": "Unlimited attempts", "noLimit": "No time limit",
     "pastAttempts": "Past attempts", "noAttempts": "No attempts yet.",
     "attempt_in_progress": "In progress", "attempt_submitted": "Submitted", "attempt_needs_grading": "Waiting for grading", "attempt_graded": "Graded"

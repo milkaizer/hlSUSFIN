@@ -33,6 +33,8 @@ function loginPath(locale: string, next: string) {
 
 export async function requireUser(locale: string, next: string) {
   const v = await getViewer();
+  // 로그인은 됐는데 프로필을 못 읽으면 로그인 화면에 실패 안내 (로그인 화면은 프로필이 있을 때만 되돌려 보낸다)
+  if (v.supabase && v.user && !v.profile) redirect(`${localePath(locale, "/login")}?reason=failed`);
   if (!v.supabase || !v.user || !v.profile) redirect(loginPath(locale, localePath(locale, next)));
   return { supabase: v.supabase, user: v.user, profile: v.profile };
 }

@@ -21,8 +21,8 @@ export default async function LoginPage({ params, searchParams }: Props) {
   const next = safeNext(typeof sp.next === "string" ? sp.next : null, localePath(locale, "/myclass"));
   const reason = sp.reason === "other_device" || sp.reason === "failed" ? sp.reason : null;
 
-  const { user } = await getViewer();
-  if (user) redirect(next);
+  const { user, profile } = await getViewer();
+  if (user && profile) redirect(next);
 
   const configured = supabaseConfigured();
   return (

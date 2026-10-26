@@ -28,8 +28,8 @@
   .btn-ghost { @apply btn text-azul hover:bg-azul-soft; }
   .btn-danger { @apply btn border border-warn/40 bg-white text-warn hover:bg-warn hover:text-white; }
   .btn-sm { @apply min-h-9 px-3 text-sm; }
-  .btn[disabled], .btn[aria-disabled="true"] { @apply cursor-not-allowed border-line bg-line/60 text-muted hover:bg-line/60 hover:text-muted; }
-  .field { @apply block w-full rounded-tile border border-line bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-muted/70 focus:border-azul focus:outline-none; }
+  .btn:disabled, .btn[aria-disabled="true"] { @apply cursor-not-allowed border-line bg-line/60 text-muted hover:bg-line/60 hover:text-muted; }
+  .field { @apply block w-full rounded-tile border border-line bg-white px-3 py-2.5 text-[15px] text-ink placeholder:text-muted/70 focus:border-azul; }
   .field:disabled { @apply cursor-not-allowed bg-paper text-muted; }
   .label { @apply mb-1.5 block text-sm font-semibold text-ink; }
   .panel { @apply rounded-tile border border-line bg-white; }

@@ -14,7 +14,8 @@
 | P7 게시판 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P8 전체 점검 | 완료, 수정 반영 | `logs/build/p8-check.md` | 남은 Medium 1, Low 9 수정. 13.3~13.7 은 실제 Supabase 필요 |
 | P9 보안 리뷰 | 완료, 수정 반영 | `logs/build/p9-security.md` | High 2, Medium 4, Low 4 모두 수정 (P9-7 은 페이지·액션 단 검사 추가로 보강) |
-| P10 배포 | 대기 | | |
+| P10 배포 | 대기 (Vercel 가입 필요) | | Vercel 리전 icn1 고정(`vercel.json`) |
+| Step E 학생 초대 준비 | 일부 완료 | tsc, lint, build 오류 0, P1 17/17 | 약관·개인정보처리방침 한/영 초안(`content/legal.ts`, 사람 검토 필요), 학생 안내문 1쪽×2 PDF(`docs/student-guide.pdf`, 배포 주소 비어 있음). 남은 것: 메일 SMTP, Google 앱 Production 게시, 강의·레슨·문제 등록 |
 
 ## 테스트 실행
 - P1: `bash scripts/test-p1.sh` (tsc, eslint, 미연결 빌드 2개, Playwright)

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vita Language 시작 안내</title>
+<!-- docs/student-guide.md 와 같은 내용. 인쇄용 A4, 1쪽 한국어 + 1쪽 영어. PDF: node scripts/student-guide-pdf.mjs -->
+<style>
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; background: #fff; color: #1a1f2e; }
+body { font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", Arial, sans-serif; font-size: 9.9pt; line-height: 1.48; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.page { width: 210mm; height: 297mm; padding: 13mm 14mm 11mm; display: flex; flex-direction: column; page-break-after: always; break-after: page; overflow: hidden; }
+.page:last-child { page-break-after: auto; break-after: auto; }
+header { border-bottom: 2px solid #1d4ed8; padding-bottom: 5mm; margin-bottom: 5mm; }
+.brand { font-size: 12pt; letter-spacing: -0.02em; }
+.brand .v { font-weight: 800; } .brand .l { font-weight: 500; color: #5b6475; }
+h1 { font-size: 19pt; line-height: 1.25; margin: 2mm 0 2mm; letter-spacing: -0.02em; }
+.site { margin: 0; font-size: 10.5pt; color: #3b4252; }
+code { font-family: Consolas, "Courier New", monospace; background: #eef2ff; color: #1d4ed8; padding: 0.3mm 1.5mm; border-radius: 1mm; font-size: 0.95em; }
+.cols { display: grid; grid-template-columns: 1fr 1fr; column-gap: 7mm; align-items: start; flex: 1; }
+[lang="ko"] { word-break: keep-all; }
+.card { break-inside: avoid; page-break-inside: avoid; margin: 0 0 4mm; padding: 3mm 3.5mm 1.5mm; border: 1px solid #dfe3ea; border-top: 3px solid #1d4ed8; border-radius: 2mm; }
+h2 { font-size: 12pt; margin: 0 0 1.5mm; display: flex; align-items: center; gap: 2mm; }
+h2 .n { display: inline-flex; width: 6mm; height: 6mm; border-radius: 50%; background: #1d4ed8; color: #fff; font-size: 9.5pt; align-items: center; justify-content: center; flex: none; }
+ul { margin: 0; padding-left: 4.5mm; }
+li { margin: 0 0 1.1mm; }
+b { font-weight: 700; color: #111827; }
+footer { border-top: 1px solid #dfe3ea; padding-top: 3mm; font-size: 9.5pt; color: #5b6475; }
+@media screen { body { background: #e5e7eb; } .page { margin: 10mm auto; background: #fff; box-shadow: 0 1px 6px rgba(0,0,0,.15); } }
+</style>
+</head>
+<body>
+<section class="page" lang="ko">
+<header><div class="brand"><span class="v">Vita</span> <span class="l">Language</span></div>
+<h1>Vita Language 시작 안내</h1>
+<p class="site">사이트 주소: <code>&lt;배포 후 주소&gt;</code> (영어 화면: <code>&lt;배포 후 주소&gt;/en</code>)</p></header>
+<div class="cols">
+<div class="col">
+<div class="card"><h2><span class="n">1</span>가입</h2><ul>
+<li>오른쪽 위 <b>로그인</b>을 누르고 <b>Google 계정으로 계속하기</b>를 누르거나, 이메일을 넣고 <b>로그인 링크 받기</b>를 누릅니다.</li>
+<li>이메일로 받은 링크는 <b>링크를 요청한 같은 브라우저</b>에서 열어 주세요. 다른 기기나 메일 앱 안에서 열면 로그인되지 않으니 다시 요청합니다.</li>
+<li>처음 로그인하면 바로 가입됩니다.</li>
+</ul></div>
+<div class="card"><h2><span class="n">2</span>수강신청</h2><ul>
+<li>위쪽 <b>수강신청</b>에서 과목과 단계를 고르고, 학년이나 현재 수준, 원하는 일정을 적어 <b>수강신청 보내기</b>를 누릅니다.</li>
+<li>지금은 무료 테스트 운영 기간이라 결제는 없습니다.</li>
+<li>만 14세 미만이면 남길 말에 적어 주세요. 보호자 동의를 받은 뒤 승인합니다.</li>
+</ul></div>
+<div class="card"><h2><span class="n">3</span>승인</h2><ul>
+<li>승인 전에는 My Class 에 "승인 대기 중"이 보입니다. 강사가 확인하고 승인하면 과목이 나타납니다.</li>
+<li>신청 결과는 수강신청 화면의 <b>내 신청 내역</b>에서도 볼 수 있습니다.</li>
+</ul></div>
+<div class="card"><h2><span class="n">7</span>한 계정, 한 기기</h2><ul>
+<li>한 계정은 동시에 한 기기에서만 로그인됩니다. 다른 기기에서 로그인하면 먼저 쓰던 기기는 자동으로 로그아웃됩니다.</li>
+<li>계정을 다른 사람과 함께 쓰지 말아 주세요. 강의 영상에는 로그인한 이메일이 표시되고, 영상과 수업은 녹화할 수 없습니다.</li>
+</ul></div>
+</div>
+<div class="col">
+<div class="card"><h2><span class="n">4</span>My Class</h2><ul>
+<li><b>내 과목</b>: 영상 강의를 보고 레슨마다 완료로 표시합니다.</li>
+<li><b>문제·모의고사</b>: 연습 문제와 시간 제한 모의고사를 풉니다. 정답과 해설은 제출한 뒤에 보입니다.</li>
+<li><b>일정</b>: 예약한 회화 콜과 라이브 수업이 달력에 표시됩니다. 시간은 내 기기 기준입니다.</li>
+<li><b>내 질문</b>: 과목별 Q&amp;A 에 남긴 질문과 답변 여부를 봅니다.</li>
+</ul></div>
+<div class="card"><h2><span class="n">5</span>Q&amp;A 로 질문하기</h2><ul>
+<li>위쪽 <b>공지·Q&amp;A</b>에서 내 과목 탭을 고르고 <b>질문하기</b>를 누릅니다.</li>
+<li>다른 학생에게 보이지 않게 하려면 <b>비공개 질문</b>에 체크합니다. 강사 답변이 달리면 "답변 완료"로 바뀝니다.</li>
+</ul></div>
+<div class="card"><h2><span class="n">6</span>15분 회화 콜 예약</h2><ul>
+<li>My Class 의 <b>회화콜 예약</b> 탭에서 이번 달 남은 횟수를 확인하고 <b>15분 콜 예약하기</b>를 누릅니다.</li>
+<li>예약 페이지에서 시간을 고르면 Google Meet 링크가 담긴 확인 메일이 옵니다. 변경과 취소는 그 메일에서 합니다.</li>
+<li>라이브 수업 입장 링크는 시작 30분 전에 열립니다.</li>
+</ul></div>
+</div>
+</div>
+<footer>질문은 과목별 Q&amp;A 게시판에 남겨 주세요. 이용약관과 개인정보처리방침은 사이트 맨 아래에 있습니다.</footer></section>
+<section class="page" lang="en">
+<header><div class="brand"><span class="v">Vita</span> <span class="l">Language</span></div>
+<h1>Getting started with Vita Language</h1>
+<p class="site">Site: <code>&lt;address after launch&gt;/en</code></p></header>
+<div class="cols">
+<div class="col">
+<div class="card"><h2><span class="n">1</span>Sign up</h2><ul>
+<li>Click <b>Log in</b> at the top right. Click <b>Continue with Google</b>, or enter your email and click <b>Email me a login link</b>.</li>
+<li>Open the emailed link <b>in the same browser you used to request it</b>. If you open it on another device or inside a mail app, it will not log you in, so request a new one.</li>
+<li>Your first login creates your account.</li>
+</ul></div>
+<div class="card"><h2><span class="n">2</span>Apply</h2><ul>
+<li>Click <b>Apply</b>, choose a course and plan, add your level and preferred schedule, then click <b>Send application</b>.</li>
+<li>This is a free test run, so there is no payment.</li>
+<li>If you are under 14, say so in your note. Your application is approved after a parent or guardian consents.</li>
+</ul></div>
+<div class="card"><h2><span class="n">3</span>Approval</h2><ul>
+<li>Until approval, My Class shows "Waiting for approval". Your course appears once the instructor approves it.</li>
+<li>You can also check the result under <b>My applications</b> on the Apply page.</li>
+</ul></div>
+<div class="card"><h2><span class="n">7</span>One account, one device</h2><ul>
+<li>Each account can be logged in on one device at a time. Logging in on a new device logs out the previous one.</li>
+<li>Please do not share your account. Lesson videos show the email you logged in with, and lessons and classes may not be recorded.</li>
+</ul></div>
+</div>
+<div class="col">
+<div class="card"><h2><span class="n">4</span>My Class</h2><ul>
+<li><b>My courses</b>: watch video lessons and mark each one as done.</li>
+<li><b>Practice and exams</b>: practice sets and timed mock exams. Answers and explanations appear after you submit.</li>
+<li><b>Schedule</b>: your booked calls and live classes on a calendar, in your device's time zone.</li>
+<li><b>My questions</b>: questions you posted on your course Q&amp;A and whether they have been answered.</li>
+</ul></div>
+<div class="card"><h2><span class="n">5</span>Ask on Q&amp;A</h2><ul>
+<li>Click <b>Notices and Q&amp;A</b>, choose your course tab, then click <b>Ask a question</b>.</li>
+<li>Tick <b>Private</b> so other students cannot see it. Your question shows "Answered" once the instructor replies.</li>
+</ul></div>
+<div class="card"><h2><span class="n">6</span>Book a 15-minute call</h2><ul>
+<li>In My Class, open <b>Book a call</b>, check how many calls you have left this month, and click <b>Book a 15-minute call</b>.</li>
+<li>Pick a time on the booking page. A confirmation email with the Google Meet link follows. Change or cancel from that email.</li>
+<li>Live class links open 30 minutes before the start.</li>
+</ul></div>
+</div>
+</div>
+<footer>Questions? Post them on your course Q&amp;A board. The Terms of use and Privacy policy are linked at the bottom of every page.</footer></section>
+</body>
+</html>

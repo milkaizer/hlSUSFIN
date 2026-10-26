@@ -295,7 +295,10 @@
     "links": "Links"
   },
   "legal": {
-    "draft": "This page is being drafted and will be posted before the official launch."
+    "effective": "Effective date: official launch date",
+    "testNote": "This version applies during the free test run. It will be revised and announced again for the full or paid service.",
+    "contactEmail": "Contact email",
+    "contactFallback": "A contact email has not been posted yet. Enrolled students can leave a private question on their course Q&A board. Others can use the contact method given on the Notices board."
   },
   "common": {
     "notFound": "Page not found.",

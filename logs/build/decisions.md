@@ -122,3 +122,8 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - 실제 Supabase E2E(app)는 기다림을 expect 30초, 테스트 180초로 늘림. 개발 PC 에서 서울 DB 왕복이 회당 0.4~2초라 서버 액션 한 번이 10초를 넘김. 운영은 Vercel icn1 과 같은 리전이라 해당 없음.
 - 같은 폼을 연달아 제출하는 E2E 단계는 제출 응답과 화면 행 수 증가까지 기다린 뒤 다음 입력을 시작함(submitAction). 앞 제출의 폼 초기화가 뒤에 입력한 값을 덮어쓰는 경쟁 때문. 앱 코드 문제는 아님(공개 목록의 published 필터는 이미 있음).
 - Google 로그인: Google Cloud 프로젝트 `vita-language`, Google Auth Platform 앱 이름 Vita Language, 사용자 유형 External, 게시 상태 Testing. 테스트 사용자에 운영자 계정 1개 등록. OAuth 클라이언트(웹) 리디렉션 URI 는 `https://uikntymdnkuogwncjakk.supabase.co/auth/v1/callback` 하나. Supabase Google 공급자 켜고 Client ID 입력, Client Secret 은 사용자가 직접 입력. 학생 초대 전(Step E)에 앱을 Production 으로 게시해야 테스트 사용자 외에도 로그인됨(이름, 이메일만 쓰므로 Google 검수 대상 아님으로 예상, 게시 때 확인).
+
+## Step E 약관, 개인정보처리방침, 학생 안내
+- `/terms`, `/privacy` 본문은 `content/legal.ts`(한/영), 화면은 `components/LegalDoc.tsx`. 문의처는 `NEXT_PUBLIC_CONTACT_EMAIL` 이 있으면 이메일, 없으면 Q&A 게시판 안내 문장. 시행일은 "정식 공개일" 자리표시.
+- 두 문서는 운영자 검토용 초안이다. 학생 초대 전에 사람이(가능하면 법률 전문가가) 검토해야 함. 특히 보관 기간(탈퇴 후 5일, 종료 후 30일), 국외 이전 표기, 만 14세 미만 보호자 동의 절차, 보호책임자 성명 기재 여부.
+- 학생 안내 인쇄본은 `docs/student-guide.html`(A4, 한국어 1쪽 + 영어 1쪽)을 `node scripts/student-guide-pdf.mjs` 로 `docs/student-guide.pdf` 로 만든다. md 를 고치면 html 도 같이 고칠 것. 배포 주소가 정해지면 `<배포 후 주소>` 를 세 파일 모두에서 바꾸고 PDF 를 다시 만든다.

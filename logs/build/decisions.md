@@ -111,3 +111,10 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 ## 서버 위치
 - Supabase 리전은 서울, Vercel 함수 리전도 `vercel.json` 으로 서울(`icn1`). Vercel 기본값은 미국 동부(iad1)라 한국, 스페인 모두에서 느려짐. 사이트 서버와 DB 를 같은 곳에 둬야 페이지마다 여러 번 오가는 DB 조회가 짧아짐.
 - 서울을 고른 이유: 한국 학생에 미성년(내신)이 포함되어 개인정보를 국내에 두는 편이 처리방침이 단순함. 한국은 EU 적정성 결정을 받은 나라라 스페인 학생 데이터를 서울에 둬도 GDPR 상 이전 근거가 있음. 영상(YouTube)과 회화 콜·라이브(Google Meet)는 서버 위치와 무관하게 각 서비스의 가까운 서버로 연결됨. 스페인 쪽 체감 지연은 클릭당 약 0.3초 수준으로 예상.
+
+## Step B Supabase 설정 (내장 브라우저로 진행, 2026-10-26)
+- 프로젝트 `vita-language`, 리전 Northeast Asia (Seoul). 생성 화면의 "Automatically expose new tables" 는 끔(마이그레이션이 테이블마다 grant 를 명시하고 시퀀스가 없음을 확인), "Enable automatic RLS" 는 켬(0001 이 20개 테이블 모두 RLS 를 켜므로 결과 같음, 이후 실수 방지).
+- SQL 은 0001, 0003, 0002, seed 순으로 적용됨. 0002 실행이 Supabase 의 "파괴적 작업" 확인창에서 멈춘 것을 함수 목록 조회로 발견해 다시 실행. 0002 는 함수만 만들고 0003 은 0002 함수에 의존하지 않아 결과는 정해진 순서와 같음. 확인 결과: 테이블 20(RLS 20), categories 4, tiers 3, admin_* 함수 7, 수강신청 대기 유니크 인덱스, 게시글 수정 컬럼 권한 3.
+- Redirect URLs: `http://localhost:3000/auth/callback`, `http://localhost:3001/auth/callback`(test-app.sh 의 플래그 빌드). Site URL 은 기본값 `http://localhost:3000`.
+- 메일 템플릿(SETUP 1-6) 은 건너뜀: Supabase 가 이제 사용자 SMTP 를 연결해야 템플릿을 고칠 수 있게 함. 기본 템플릿이면 매직링크는 요청한 같은 브라우저에서 열어야 함(로그인 화면 안내문 있음). Supabase 기본 메일은 시간당 발송 수가 아주 적어서 학생 초대 전(Step E)에 SMTP(예: Resend) 연결이 필요.
+- 키는 레거시 anon, service_role 을 씀(`@supabase/ssr` 0.5.2 기준으로 검증된 방식). 새 publishable/secret 키 전환은 나중 과제.

@@ -2,7 +2,7 @@ import { defineConfig } from "@playwright/test";
 
 // E2E_SUITE
 //   public: 13.1 공개 페이지 (Supabase 미연결 빌드 .next-p1 + 플래그 on 빌드 .next-flags)
-//   app:    13.3~13.7 (로컬 Supabase 스택에 연결된 빌드 .next)
+//   app:    13.3~13.7 (실제 Supabase 에 연결된 빌드 .next, 플래그 on 빌드 .next-app-flags). scripts/test-app.sh
 // 서버는 Playwright 가 직접 띄우고 끝나면 내린다 (함정 5). 호스트는 localhost (함정 4)
 const suite = process.env.E2E_SUITE ?? "public";
 
@@ -27,10 +27,14 @@ const appServers = [
   {
     command: "npx next start -p 3000",
     url: "http://localhost:3000",
-    env: { NEXT_DIST_DIR: ".next" },
+    env: { NEXT_DIST_DIR: process.env.APP_DIST ?? ".next" },
     reuseExistingServer: false,
     timeout: 60_000,
   },
+  // 13.7-6 합격자 플래그 true 빌드
+  ...(process.env.APP_FLAGS_URL
+    ? [{ command: "npx next start -p 3001", url: "http://localhost:3001", env: { NEXT_DIST_DIR: ".next-app-flags" }, reuseExistingServer: false, timeout: 60_000 }]
+    : []),
 ];
 
 export default defineConfig({

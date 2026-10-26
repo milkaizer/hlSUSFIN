@@ -8,6 +8,8 @@ $PSQL -d postgres -c "drop database if exists $DB" >/dev/null
 for r in anon authenticated service_role; do $PSQL -d postgres -c "drop role if exists $r" >/dev/null 2>&1 || true; done
 $PSQL -d postgres -c "create database $DB" >/dev/null
 $PSQL -d $DB -f supabase/tests/auth_stub.sql >/dev/null
-$PSQL -d $DB -f supabase/migrations/0001_init.sql >/dev/null
+for f in supabase/migrations/*.sql; do $PSQL -d $DB -f "$f" >/dev/null; done
 $PSQL -d $DB -f supabase/seed.sql >/dev/null
 $PSQL -d $DB -f supabase/tests/rls_test.sql
+# 앱이 쓰는 쿼리와 0002 함수 (부록 C 이후 추가)
+$PSQL -d $DB -f supabase/tests/app_test.sql

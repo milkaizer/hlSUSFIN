@@ -16,6 +16,6 @@
     "plugins": [{ "name": "next" }],
     "paths": { "@/*": ["./*"] }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next-p1/types/**/*.ts", ".next-flags/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next-p1/types/**/*.ts", ".next-flags/types/**/*.ts", ".next-app-flags/types/**/*.ts"],
   "exclude": ["node_modules", "local-stack"]
 }

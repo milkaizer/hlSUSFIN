@@ -38,7 +38,10 @@ export async function startQuiz(fd: FormData) {
   if (!isUuid(quizId)) redirect(localePath(locale, "/myclass?tab=quizzes"));
   const { supabase } = await viewerOrLogin(locale);
   const { data, error } = await supabase.rpc("start_attempt", { p_quiz: quizId });
-  if (error || typeof data !== "string") redirect(`${localePath(locale, `/myclass/quiz/${quizId}`)}?err=1`);
+  if (error || typeof data !== "string") {
+    const code = error?.message.includes("max attempts") ? "max" : "start";
+    redirect(`${localePath(locale, `/myclass/quiz/${quizId}`)}?err=${code}`);
+  }
   redirect(localePath(locale, `/myclass/attempt/${data}`));
 }
 

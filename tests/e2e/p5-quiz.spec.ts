@@ -19,6 +19,7 @@ async function createQuiz(page: Page, title: string, kind: "practice" | "mock", 
   if (max) await page.locator('input[name="max_attempts"]').fill(String(max));
   await page.locator('input[name="published"]').check();
   await page.getByRole("button", { name: "세트 만들기" }).click();
+  await page.waitForURL(/\/admin\/quizzes\/[0-9a-f-]{36}\?msg=created$/);
   await expect(page.getByTestId("admin-ok")).toHaveText("추가했습니다.");
   return page.url().match(/quizzes\/([0-9a-f-]{36})/)![1];
 }
@@ -31,8 +32,16 @@ async function addQuestion(page: Page, q: { type: string; prompt: string; choice
   await form.locator('textarea[name="answer"]').fill(q.answer ?? "");
   await form.locator('textarea[name="explanation"]').fill(q.explanation ?? "");
   await form.locator('input[name="points"]').fill(String(q.points ?? 1));
+  const quizId = page.url().match(/quizzes\/([0-9a-f-]{36})/)![1];
+  const before = await questionCount(quizId);
   await form.getByRole("button", { name: "문항 추가" }).click();
+  await expect.poll(() => questionCount(quizId)).toBe(before + 1);
   await expect(page.getByTestId("admin-ok")).toHaveText("추가했습니다.");
+}
+
+async function questionCount(quizId: string) {
+  const { count } = await adminDb().from("questions").select("id", { count: "exact", head: true }).eq("quiz_id", quizId);
+  return count ?? 0;
 }
 
 test.beforeAll(async () => {
@@ -78,10 +87,9 @@ test("13.5-6 응시 중 응답에 answer·explanation 없음 / 13.5-1·2 자동 
   await s.page.getByTestId("start-quiz").click();
   await expect(s.page).toHaveURL(/\/myclass\/attempt\//);
   await expect(s.page.locator("[data-qtype]")).toHaveCount(4);
+  // 메시지 키 "answer"(정답 라벨)는 화면 문구라 응답에 있을 수 있으므로, 문항별 정답·해설 값이 없는지만 본다
   for (const b of bodies) {
-    expect(b).not.toContain("인사말");
-    expect(b).not.toContain("둘 다 정답");
-    expect(b).not.toMatch(/"(answer|explanation)"\s*:/);
+    for (const secret of ["인사말", "둘 다 정답", "buenas", "a, e"]) expect(b).not.toContain(secret);
   }
 
   const q = (type: string) => s.page.locator(`[data-qtype="${type}"]`);

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isCategorySlug } from "@/content/categories";
-import { isUuid, safeHttpsUrl } from "@/lib/validate";
+import { isMeetUrl, isUuid } from "@/lib/validate";
 
 // Cal.com 웹훅. 서명 검증 후 call_bookings 기록 (10.3)
 // 예약 링크에 metadata[user_id], metadata[category] 를 붙여 보낸다 (lib/cal.ts)
@@ -66,11 +66,17 @@ export async function POST(request: NextRequest) {
   const rawEmail = p.attendees?.[0]?.email ?? respEmail ?? null;
   const email = typeof rawEmail === "string" && rawEmail.length <= 320 ? rawEmail.trim().toLowerCase() : null;
 
-  // 사용자 식별: metadata.user_id 우선, 없으면 참석자 이메일
-  let userId = isUuid(p.metadata?.user_id) ? p.metadata!.user_id! : null;
-  if (userId) {
-    const { data } = await db.from("profiles").select("id").eq("id", userId).maybeSingle();
-    if (!data) userId = null;
+  // 사용자 식별 (10.3). metadata.user_id 는 예약 링크에 붙는 값이라 누구나 바꿀 수 있으므로,
+  // 참석자 이메일이 그 회원 이메일과 같을 때만 믿는다 (P9-2). 그 밖에는 이메일로 회원을 찾아 표시만 하고
+  // 상태를 over_limit 로 두어 관리자가 확인한다 (다른 학생 크레딧 소진 방지)
+  let userId: string | null = null;
+  let trusted = false;
+  if (isUuid(p.metadata?.user_id)) {
+    const { data } = await db.from("profiles").select("id,email").eq("id", p.metadata!.user_id!).maybeSingle<{ id: string; email: string }>();
+    if (data && email && data.email.trim().toLowerCase() === email) {
+      userId = data.id;
+      trusted = true;
+    }
   }
   if (!userId && email) {
     const { data } = await db.from("profiles").select("id").eq("email", email).limit(1).maybeSingle();
@@ -80,25 +86,29 @@ export async function POST(request: NextRequest) {
 
   // 일정 변경: 이전 예약은 취소 처리하고 새 예약을 기록
   const previous = p.rescheduleUid ?? p.fromReschedule;
-  if (event === "BOOKING_RESCHEDULED" && typeof previous === "string" && previous !== uid) {
-    await db.from("call_bookings").update({ status: "cancelled", updated_at: now }).eq("cal_uid", previous);
+  // 같은 회원의 예약일 때만 취소한다 (다른 회원 예약을 건드리지 않게)
+  if (event === "BOOKING_RESCHEDULED" && typeof previous === "string" && previous !== uid && userId) {
+    await db.from("call_bookings").update({ status: "cancelled", updated_at: now }).eq("cal_uid", previous).eq("user_id", userId);
   }
 
   // 크레딧 초과 예약은 over_limit 으로 표시해 관리자가 확인한다
-  // 같은 uid 재전송은 기존 상태 유지 (함정 10)
-  let status: "accepted" | "over_limit" = "accepted";
+  // 같은 uid 재전송은 기존 상태 유지 (함정 10). 취소된 예약이 늦게 다시 와도 되살리지 않는다
   const { data: existing } = await db.from("call_bookings").select("status").eq("cal_uid", uid).maybeSingle();
-  if (existing && existing.status !== "cancelled") {
+  if (existing?.status === "cancelled") return NextResponse.json({ ok: true, status: "cancelled" });
+  let status: "accepted" | "over_limit" = "accepted";
+  if (existing) {
     status = existing.status as "accepted" | "over_limit";
-  } else if (userId && category) {
+  } else if (trusted && category) {
     const { data: credits } = await db.rpc("call_credits_for", { p_user: userId, p_category: category, p_at: startsAt });
     if (typeof credits !== "number" || credits <= 0) status = "over_limit";
   } else {
-    // 회원이나 과목을 알 수 없는 예약은 관리자가 확인하도록 초과로 둔다
+    // 회원 확인이 안 되거나 과목을 알 수 없는 예약은 관리자가 확인한다
     status = "over_limit";
   }
 
-  const meet = safeHttpsUrl(p.videoCallData?.url ?? p.metadata?.videoCallUrl ?? null);
+  // Meet 링크는 meet.google.com 만 저장 (P9-6)
+  const rawMeet = p.videoCallData?.url ?? p.metadata?.videoCallUrl ?? null;
+  const meet = isMeetUrl(rawMeet) ? rawMeet : null;
   const { error } = await db.from("call_bookings").upsert({
     cal_uid: uid, user_id: userId, category, attendee_email: email,
     starts_at: startsAt, ends_at: endsAt, status, meet_url: meet, updated_at: now,

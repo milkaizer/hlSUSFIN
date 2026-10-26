@@ -25,7 +25,7 @@ export default async function AdminHome({ params }: { params: Promise<{ locale: 
         <Card label="승인 대기 회원" value={pendingMembers} href="/admin/members?status=pending" tone="warn" />
         <Card label="대기 중인 수강신청" value={pendingRequests} href="/admin/requests" tone="warn" />
         <Card label="채점 대기" value={needsGrading} href="/admin/grading" tone="warn" />
-        <Card label="크레딧 초과 예약" value={overLimit} href="/admin/calls?status=over_limit" tone="warn" />
+        <Card label="확인 필요한 예약" value={overLimit} href="/admin/calls?status=over_limit" tone="warn" />
         <Card label="답변 대기 질문" value={waiting} href="/admin/board" tone="warn" />
       </div>
     </>

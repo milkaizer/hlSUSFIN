@@ -49,7 +49,9 @@ export default async function ApplyPage({ params, searchParams }: Props) {
       <div className="wrap grid gap-10 py-12 lg:grid-cols-[minmax(0,40rem)_1fr]">
         <div>
           {sp.sent === "1" && <p role="status" className="mb-6 rounded-tile border border-ok/40 bg-ok/10 p-4 font-semibold text-ok">{t("sent")}</p>}
-          {sp.error === "1" && <p role="alert" className="mb-6 rounded-tile border border-warn/40 bg-warn/10 p-4 font-semibold text-warn">{t("error")}</p>}
+          {(sp.error === "1" || sp.error === "dup") && (
+            <p role="alert" className="mb-6 rounded-tile border border-warn/40 bg-warn/10 p-4 font-semibold text-warn">{sp.error === "dup" ? t("duplicate") : t("error")}</p>
+          )}
           {!loggedIn && (
             <p className="mb-6 rounded-tile border border-azafran bg-azafran-soft p-4">
               <a href={loginHref} className="link" data-testid="apply-login">{t("loginFirst")}</a>

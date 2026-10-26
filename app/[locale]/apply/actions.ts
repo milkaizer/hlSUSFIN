@@ -23,5 +23,6 @@ export async function submitApplication(formData: FormData) {
     tier: tier as string,
     message: message || null,
   });
-  back(error ? "error=1" : "sent=1");
+  // 같은 과목에 확인 중인 신청이 이미 있으면 유니크 인덱스가 막는다
+  back(error ? (error.code === "23505" ? "error=dup" : "error=1") : "sent=1");
 }

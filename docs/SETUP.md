@@ -9,10 +9,11 @@
    - Project URL: `NEXT_PUBLIC_SUPABASE_URL`
    - anon public key: `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - service_role key: `SUPABASE_SERVICE_ROLE_KEY` (절대 공개하지 않음)
-3. SQL Editor 에서 아래 파일을 이 순서로 각각 실행합니다. 파일 내용을 통째로 붙여 넣고 Run.
+3. SQL Editor 에서 아래 파일을 이 순서로 각각 실행합니다. 하나라도 빠지면 Q&A 작성, 관리자 문항 편집 등이 동작하지 않습니다. 파일 내용을 통째로 붙여 넣고 Run.
    1. `supabase/migrations/0001_init.sql`
    2. `supabase/migrations/0002_admin_functions.sql` (HANDOFF 이후 추가된 관리자 함수)
-   3. `supabase/seed.sql`
+   3. `supabase/migrations/0003_security.sql` (보안 리뷰 반영)
+   4. `supabase/seed.sql`
 4. Authentication > URL Configuration
    - Site URL: `http://localhost:3000` (배포 후 운영 주소로 변경)
    - Redirect URLs: `http://localhost:3000/auth/callback`, 배포 후 `https://<도메인>/auth/callback` 추가

@@ -7,7 +7,7 @@ import type { ServerSupabase } from "@/lib/supabase/server";
 import { categoryName } from "@/content/categories";
 import { tierName } from "@/content/tiers";
 import { calBookingUrl } from "@/lib/cal";
-import { safeHttpsUrl } from "@/lib/validate";
+import { isMeetUrl, safeHttpsUrl } from "@/lib/validate";
 import { LocalTime } from "@/components/LocalTime";
 import { MonthCalendar, type CalEvent } from "@/components/myclass/MonthCalendar";
 import { Check } from "@/components/ui/Icons";
@@ -326,7 +326,7 @@ async function CallsTab({ supabase, profile, ents, locale }: TabProps & { ents: 
         ) : (
           <ul className="mt-3 divide-y divide-line border-y border-line" data-testid="upcoming-calls">
             {bookings.map((b) => {
-              const meet = safeHttpsUrl(b.meet_url);
+              const meet = isMeetUrl(b.meet_url) ? b.meet_url : null;
               return (
                 <li key={b.id} className="flex flex-wrap items-center justify-between gap-2 py-3">
                   <span>

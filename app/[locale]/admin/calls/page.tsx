@@ -2,7 +2,7 @@ import { requireAdmin } from "@/lib/auth";
 import { Link } from "@/i18n/routing";
 import { categoryName } from "@/content/categories";
 import { kstLabel } from "@/lib/admin-utils";
-import { safeHttpsUrl } from "@/lib/validate";
+import { isMeetUrl } from "@/lib/validate";
 import { H, Notice, Table, TD, Badge, Empty } from "@/components/admin/ui";
 
 type Booking = {
@@ -13,7 +13,7 @@ type SP = Promise<Record<string, string | string[] | undefined>>;
 const FILTERS = [
   { v: "all", label: "전체" },
   { v: "accepted", label: "확정" },
-  { v: "over_limit", label: "횟수 초과" },
+  { v: "over_limit", label: "확인 필요" },
   { v: "cancelled", label: "취소" },
   { v: "unmatched", label: "회원 미확인" },
 ];
@@ -31,7 +31,7 @@ export default async function AdminCalls({ params, searchParams }: { params: Pro
 
   return (
     <>
-      <H sub="Cal.com 예약이 웹훅으로 들어옵니다. 횟수 초과는 Cal.com 에서 막을 수 없어 여기서 확인 후 Cal.com 에서 취소하거나 크레딧을 조정하세요.">회화콜</H>
+      <H sub="Cal.com 예약이 웹훅으로 들어옵니다. 확인 필요는 이번 달 횟수를 넘었거나, 예약자 이메일이 회원과 맞지 않거나, 과목을 알 수 없는 예약입니다. Cal.com 에서 막을 수 없으니 확인 후 Cal.com 에서 취소하거나 크레딧을 조정하세요.">회화콜</H>
       <Notice msg={sp.msg} err={sp.err} />
       <div className="mb-4 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -41,7 +41,7 @@ export default async function AdminCalls({ params, searchParams }: { params: Pro
       </div>
       <Table head={["시작 (서울)", "회원", "과목", "상태", "Meet"]} empty={rows.length === 0 ? <Empty>예약이 없습니다.</Empty> : null}>
         {rows.map((b) => {
-          const meet = safeHttpsUrl(b.meet_url);
+          const meet = isMeetUrl(b.meet_url) ? b.meet_url : null;
           return (
             <tr key={b.id} data-booking={b.cal_uid}>
               <TD className="whitespace-nowrap">{kstLabel(b.starts_at)}</TD>
@@ -50,7 +50,7 @@ export default async function AdminCalls({ params, searchParams }: { params: Pro
                   : <span><Badge tone="yellow">회원 미확인</Badge> <span className="text-muted">{b.attendee_email ?? ""}</span></span>}
               </TD>
               <TD>{b.category ? categoryName(b.category, "ko") : <Badge tone="yellow">과목 미확인</Badge>}</TD>
-              <TD>{b.status === "accepted" ? <Badge tone="green">확정</Badge> : b.status === "over_limit" ? <Badge tone="red">횟수 초과</Badge> : <Badge>취소</Badge>}</TD>
+              <TD>{b.status === "accepted" ? <Badge tone="green">확정</Badge> : b.status === "over_limit" ? <Badge tone="red">확인 필요</Badge> : <Badge>취소</Badge>}</TD>
               <TD>{meet ? <a href={meet} target="_blank" rel="noopener noreferrer" className="link">열기</a> : ""}</TD>
             </tr>
           );

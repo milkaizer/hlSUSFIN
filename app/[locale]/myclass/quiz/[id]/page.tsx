@@ -42,7 +42,9 @@ export default async function QuizInfo({ params, searchParams }: Props) {
       <p className="mt-2 text-muted">
         {quiz.time_limit_min ? t("minutes", { n: quiz.time_limit_min }) : t("noLimit")}, {left == null ? t("unlimited") : t("attemptsLeft", { n: left })}
       </p>
-      {sp.err === "1" && <p role="alert" className="mt-5 rounded-tile border border-warn/40 bg-warn/10 p-4 font-semibold text-warn">{t("noMoreAttempts")}</p>}
+      {(sp.err === "max" || sp.err === "start") && (
+        <p role="alert" className="mt-5 rounded-tile border border-warn/40 bg-warn/10 p-4 font-semibold text-warn">{sp.err === "max" ? t("noMoreAttempts") : t("startError")}</p>
+      )}
       <div className="mt-6">
         {open ? (
           <Link href={`/myclass/attempt/${open.id}`} className="btn-primary" data-testid="continue-quiz">{t("continue")}</Link>

@@ -77,7 +77,7 @@ export default async function BoardPage({ params, searchParams }: Props) {
                 </ul>
               </nav>
               {!allowed ? (
-                <p className="mt-6 rounded-tile border border-line bg-white p-4 text-muted" data-testid="qa-no-access">{t("noAccess")}</p>
+                <p className="mt-6 rounded-tile border border-line bg-white p-4 text-muted" data-testid="qa-no-access">{t("qaNoAccess")}</p>
               ) : (
                 <div className="mt-6 grid gap-10 lg:grid-cols-[1fr_22rem]">
                   <div>

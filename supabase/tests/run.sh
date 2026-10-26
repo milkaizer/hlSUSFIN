@@ -13,3 +13,5 @@ $PSQL -d $DB -f supabase/seed.sql >/dev/null
 $PSQL -d $DB -f supabase/tests/rls_test.sql
 # 앱이 쓰는 쿼리와 0002 함수 (부록 C 이후 추가)
 $PSQL -d $DB -f supabase/tests/app_test.sql
+# 0003 보안 보강 확인
+$PSQL -d $DB -f supabase/tests/security_test.sql

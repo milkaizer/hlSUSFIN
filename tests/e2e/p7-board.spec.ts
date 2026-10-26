@@ -27,7 +27,7 @@ test("13.7-1 공지: 관리자 작성, 비로그인 열람, 홈 배너", async (
   await a.page.locator('input[name="title"]').fill(noticeTitle);
   await a.page.locator('textarea[name="body"]').fill("라이브는 매주 화요일입니다.");
   await a.page.getByRole("button", { name: "공지 올리기" }).click();
-  await expect(a.page.getByTestId("admin-ok")).toBeVisible();
+  await expect.poll(async () => (await adminDb().from("board_posts").select("id").eq("title", noticeTitle)).data?.length ?? 0).toBe(1);
   await a.context.close();
 
   await page.goto("/board");
@@ -46,7 +46,7 @@ test("13.7-2 권한 없는 과목 Q&A: 탭 없음, 직접 URL 권한 없음, RES
   await expect(page.locator('[data-qa-tab="es-conversation"]')).toBeVisible();
   await expect(page.locator('[data-qa-tab="topik"]')).toHaveCount(0);
   await page.goto("/board?c=topik");
-  await expect(page.getByTestId("qa-no-access")).toHaveText("이 글을 볼 수 있는 권한이 없습니다.");
+  await expect(page.getByTestId("qa-no-access")).toContainText("이 과목의 Q&A를 볼 수 있는 권한이 없습니다.");
   await context.close();
   await adminDb().from("board_posts").insert({ kind: "question", category: "topik", author_id: adminUser.id, title: `${TAG} topik 질문`, body: "b" });
   const db = await userDb(s1);
@@ -63,11 +63,14 @@ test("13.7-3 비공개 질문: 작성자·관리자 외 0행", async ({ browser 
   await page.getByLabel("비공개 질문").check();
   await page.getByRole("button", { name: "질문 올리기" }).click();
   await expect(page.locator("h1")).toHaveText(`${TAG} 비공개 질문`);
+  await page.waitForURL(/\/board\/[0-9a-f-]{36}$/);
   privateId = page.url().split("/board/")[1];
   await page.goto("/board?c=es-conversation");
   await page.locator("#q-title").fill(`${TAG} 공개 질문`);
   await page.locator("#q-body").fill("접속법은 언제 쓰나요?");
   await page.getByRole("button", { name: "질문 올리기" }).click();
+  await expect(page.locator("h1")).toHaveText(`${TAG} 공개 질문`);
+  await page.waitForURL(/\/board\/[0-9a-f-]{36}$/);
   publicId = page.url().split("/board/")[1];
   await context.close();
 
@@ -89,6 +92,8 @@ test("13.7-4 관리자 댓글: 강사 답변 배지, 목록 답변 완료", asyn
   await a.page.goto(`/board/${privateId}`);
   await a.page.locator("#c-body").fill("다음 콜에서 같이 봐요.");
   await a.page.getByRole("button", { name: "댓글 달기" }).click();
+  await expect.poll(async () => (await adminDb().from("board_comments").select("id").eq("post_id", privateId).eq("is_instructor", true)).data?.length ?? 0).toBe(1);
+  await a.page.goto(`/board/${privateId}`);
   const c = a.page.locator('[data-instructor="true"]');
   await expect(c).toContainText("강사 답변");
   await a.context.close();
@@ -120,7 +125,7 @@ test("13.7-6a 합격자 입력 (관리자 화면은 플래그와 무관)", async
     await row.locator('input[name="headline"]').fill(headline);
     if (published) await row.locator('input[name="published"]').check();
     await row.getByRole("button", { name: "합격자 추가" }).click();
-    await expect(a.page.getByTestId("admin-ok")).toBeVisible();
+    await expect.poll(async () => (await adminDb().from("results").select("id").eq("headline", headline)).data?.length ?? 0).toBe(1);
   };
   await add(`${TAG} TOPIK 6급`, true);
   await add(`${TAG} 비공개 성과`, false);

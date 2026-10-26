@@ -44,8 +44,9 @@ test("13.4-5a 관리자 강의·레슨 생성", async ({ browser }) => {
     await form.locator('input[name="title"]').fill(title);
     await form.locator('select[name="min_tier"]').selectOption(tier);
     await form.locator('input[name="video"]').fill(video);
+    const before = (await lessonIds(courseTitle)).length;
     await form.getByRole("button", { name: "레슨 추가" }).click();
-    await expect(page.getByTestId("admin-ok")).toBeVisible();
+    await expect.poll(async () => (await lessonIds(courseTitle)).length).toBe(before + 1);
   };
   await add("레슨 1 인사", "basic", "https://youtu.be/dQw4w9WgXcQ");
   await add("레슨 2 심화", "standard", "https://vimeo.com/76979871");
@@ -129,7 +130,7 @@ test("13.4-5b 수정·비공개 전환이 학생 화면에 반영", async ({ bro
   const row = a.page.locator("tr[data-lesson]").first();
   await row.locator('input[name="title"]').fill("레슨 1 인사 (수정)");
   await row.getByRole("button", { name: "저장" }).click();
-  await expect(a.page.getByTestId("admin-ok")).toHaveText("저장했습니다.");
+  await expect.poll(async () => (await lessonIds(courseTitle)).some((l) => l.title === "레슨 1 인사 (수정)")).toBe(true);
 
   const s = await newUserPage(browser, student);
   await expect(await lessonRow(s.page, "레슨 1 인사 (수정)")).toHaveCount(1);
@@ -137,7 +138,7 @@ test("13.4-5b 수정·비공개 전환이 학생 화면에 반영", async ({ bro
   const courseForm = a.page.locator("form").filter({ has: a.page.getByRole("button", { name: "강의 저장" }) });
   await courseForm.locator('input[name="published"]').uncheck();
   await a.page.getByRole("button", { name: "강의 저장" }).click();
-  await expect(a.page.getByTestId("admin-ok")).toBeVisible();
+  await expect.poll(async () => (await adminDb().from("courses").select("published").eq("id", courseId).single()).data?.published).toBe(false);
   await s.page.reload();
   await expect(s.page.locator('[data-course-section="es-conversation"]')).not.toContainText(courseTitle);
   const [l1] = await lessonIds(courseTitle);
@@ -146,6 +147,7 @@ test("13.4-5b 수정·비공개 전환이 학생 화면에 반영", async ({ bro
   // 다시 공개
   await courseForm.locator('input[name="published"]').check();
   await a.page.getByRole("button", { name: "강의 저장" }).click();
+  await expect.poll(async () => (await adminDb().from("courses").select("published").eq("id", courseId).single()).data?.published).toBe(true);
   await a.context.close();
   await s.context.close();
 });

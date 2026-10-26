@@ -81,11 +81,18 @@ export async function cleanup() {
   await db.from("call_bookings").delete().like("cal_uid", `${RUN}-%`);
   await db.from("results").delete().like("headline", `${TAG}%`);
   await db.from("reviews").delete().like("body", `${TAG}%`);
+  const mine: { id: string; email: string }[] = [];
   for (let page = 1; page < 20; page++) {
     const { data } = await db.auth.admin.listUsers({ page, perPage: 200 });
     const users = data?.users ?? [];
-    for (const u of users) if (u.email?.startsWith(`vita-e2e-${RUN}-`)) await db.auth.admin.deleteUser(u.id);
+    for (const u of users) if (u.email?.startsWith(`vita-e2e-${RUN}-`)) mine.push({ id: u.id, email: u.email });
     if (users.length < 200) break;
+  }
+  // 관리자는 다른 행(granted_by, handled_by, graded_by)이 참조하므로 학생을 먼저 지운다
+  mine.sort((a, b) => Number(a.email.includes("admin")) - Number(b.email.includes("admin")));
+  for (const u of mine) {
+    const { error } = await db.auth.admin.deleteUser(u.id);
+    if (error) console.warn(`cleanup: ${u.email} 삭제 실패: ${error.message}`);
   }
 }
 

@@ -1,4 +1,5 @@
 "use server";
+import { randomUUID } from "node:crypto";
 import { redirect } from "next/navigation";
 import { getViewer, isAdminProfile, localePath } from "@/lib/auth";
 import { isCategorySlug } from "@/content/categories";
@@ -19,11 +20,11 @@ export async function createQuestion(fd: FormData) {
   const { supabase, user } = await getViewer();
   if (!supabase || !user) redirect(`${localePath(locale, "/login")}?next=${localePath(locale, "/board")}`);
   if (!isCategorySlug(category) || !title || !body) back("&err=1");
-  const { data, error } = await supabase.from("board_posts")
-    .insert({ kind: "question", category, author_id: user.id, title, body, is_private: isPrivate })
-    .select("id").single();
-  if (error || !data) back("&err=1");
-  redirect(localePath(locale, `/board/${data!.id}`));
+  const id = randomUUID();
+  const { error } = await supabase.from("board_posts")
+    .insert({ id, kind: "question", category, author_id: user.id, title, body, is_private: isPrivate });
+  if (error) back("&err=1");
+  redirect(localePath(locale, `/board/${id}`));
 }
 
 export async function createComment(fd: FormData) {
@@ -45,7 +46,8 @@ export async function deletePost(fd: FormData) {
   const category = String(fd.get("category") ?? "");
   const { supabase, user } = await getViewer();
   if (!supabase || !user || !isUuid(postId)) redirect(localePath(locale, "/board"));
-  await supabase.from("board_posts").delete().eq("id", postId);
+  const { error } = await supabase.from("board_posts").delete().eq("id", postId);
+  if (error) redirect(`${localePath(locale, `/board/${postId}`)}?err=1`);
   redirect(`${localePath(locale, "/board")}${isCategorySlug(category) ? `?c=${category}` : ""}`);
 }
 
@@ -55,8 +57,8 @@ export async function deleteComment(fd: FormData) {
   const commentId = String(fd.get("comment_id") ?? "");
   const { supabase, user } = await getViewer();
   if (!supabase || !user || !isUuid(postId) || !isUuid(commentId)) redirect(localePath(locale, "/board"));
-  await supabase.from("board_comments").delete().eq("id", commentId);
-  redirect(`${localePath(locale, `/board/${postId}`)}#comments`);
+  const { error } = await supabase.from("board_comments").delete().eq("id", commentId);
+  redirect(`${localePath(locale, `/board/${postId}`)}${error ? "?err=1" : "#comments"}`);
 }
 
 // 공지 작성 (관리자). RLS 가 관리자만 허용한다

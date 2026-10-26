@@ -9,14 +9,14 @@ let adminUser: TestUser;
 let basic: TestUser;
 let standard: TestUser;
 
-// 기본 1시간 뒤: 서울 기준 같은 달 크레딧으로 계산되도록 (월말에 24시간 뒤면 다음 달이 된다)
-function booking(trigger: string, uid: string, user: TestUser, startsInHours = 1, extra: Record<string, unknown> = {}) {
+// 기본 10분 뒤: 서울 기준 같은 달 크레딧으로 계산되도록 (월말 마지막 10분에는 다음 달이 될 수 있음)
+function booking(trigger: string, uid: string, user: TestUser, startsInHours = 1 / 6, extra: Record<string, unknown> = {}) {
   const start = new Date(Date.now() + startsInHours * 3600000);
   return JSON.stringify({
     triggerEvent: trigger,
     payload: {
       uid, startTime: start.toISOString(), endTime: new Date(start.getTime() + 15 * 60000).toISOString(),
-      attendees: [{ email: user.email }],
+      attendees: [{ email: (extra.attendeeEmail as string | undefined) ?? user.email }],
       metadata: { user_id: user.id, category: "es-conversation", videoCallUrl: "https://meet.google.com/abc-defg-hij" },
       ...extra,
     },
@@ -50,7 +50,7 @@ test("13.6-1 basic: 회화콜 0회 안내, 라이브 목록 없음", async ({ br
   await page.goto("/myclass?tab=calls");
   await expect(page.locator('[data-call-card="es-conversation"]').getByTestId("no-credits")).toBeVisible();
   await page.goto("/myclass?tab=schedule");
-  await expect(page.locator("[data-live]")).toHaveCount(0);
+  await expect(page.locator("[data-live]").filter({ hasText: TAG })).toHaveCount(0);
   await page.goto("/live");
   await expect(page.getByTestId("live-list")).toHaveCount(0);
   await context.close();
@@ -102,7 +102,7 @@ test("13.6-6 서명 틀림: 401, 기록 없음", async ({ request }) => {
 test("13.6-7 크레딧 0 에서 예약: over_limit, 관리자 현황 카운트 증가", async ({ browser, request }) => {
   const a = await newUserPage(browser, adminUser, "/admin");
   await a.page.goto("/admin");
-  const card = a.page.locator('[data-card="크레딧 초과 예약"] span').last();
+  const card = a.page.locator('[data-card="확인 필요한 예약"] span').last();
   const before = Number(await card.textContent());
   expect((await (await post(request, booking("BOOKING_CREATED", `${RUN}-c1`, standard))).json()).status).toBe("accepted");
   expect((await (await post(request, booking("BOOKING_CREATED", `${RUN}-c2`, standard))).json()).status).toBe("accepted");
@@ -111,7 +111,7 @@ test("13.6-7 크레딧 0 에서 예약: over_limit, 관리자 현황 카운트 �
   await a.page.reload();
   expect(Number(await card.textContent())).toBe(before + 1);
   await a.page.goto("/admin/calls?status=over_limit");
-  await expect(a.page.locator(`tr[data-booking="${RUN}-c3"]`)).toContainText("횟수 초과");
+  await expect(a.page.locator(`tr[data-booking="${RUN}-c3"]`)).toContainText("확인 필요");
   await a.context.close();
 
   // 재예약: 이전 예약 취소, 새 uid 기록
@@ -119,6 +119,19 @@ test("13.6-7 크레딧 0 에서 예약: over_limit, 관리자 현황 카운트 �
   await post(request, resched);
   const { data } = await adminDb().from("call_bookings").select("cal_uid,status").in("cal_uid", [`${RUN}-c1`, `${RUN}-c1r`]).order("cal_uid");
   expect(data).toEqual([{ cal_uid: `${RUN}-c1`, status: "cancelled" }, { cal_uid: `${RUN}-c1r`, status: "accepted" }]);
+});
+
+test("P9-2 예약자 이메일이 회원과 다르면 크레딧을 쓰지 않고 확인 필요", async ({ request }) => {
+  const before = (await adminDb().rpc("call_credits_for", { p_user: standard.id, p_category: "es-conversation", p_at: new Date().toISOString() })).data;
+  const r = await post(request, booking("BOOKING_CREATED", `${RUN}-spoof`, standard, 1 / 6, { attendeeEmail: "someone-else@example.com" }));
+  expect((await r.json()).status).toBe("over_limit");
+  const after = (await adminDb().rpc("call_credits_for", { p_user: standard.id, p_category: "es-conversation", p_at: new Date().toISOString() })).data;
+  expect(after).toBe(before);
+  // Meet 이 아닌 링크는 저장하지 않음
+  const r2 = await post(request, booking("BOOKING_CREATED", `${RUN}-phish`, standard, 1 / 6, { videoCallData: { url: "https://evil.example/meet" } }));
+  expect(r2.status()).toBe(200);
+  const { data } = await adminDb().from("call_bookings").select("meet_url").eq("cal_uid", `${RUN}-phish`).single();
+  expect(data?.meet_url).not.toBe("https://evil.example/meet");
 });
 
 test("13.6-8 라이브 링크: 3시간 전 숨김, 20분 전 입장하기", async ({ browser }) => {
@@ -139,18 +152,24 @@ test("13.6-8 라이브 링크: 3시간 전 숨김, 20분 전 입장하기", asyn
 
 test("13.6-9 캘린더: 점 표시, 시간대에 따라 날짜·시간이 바뀜", async ({ browser }) => {
   // 서울 기준 다음 달 15일 00:30 (= UTC 전날 15:30) 라이브를 하나 넣는다
-  const now = new Date();
-  const y = now.getUTCFullYear();
-  const m = now.getUTCMonth() + 1;
+  const seoulNow = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit" }).format(new Date());
+  const [y, m] = seoulNow.split("-").map(Number);
   const ny = m === 12 ? y + 1 : y;
   const nm = m === 12 ? 1 : m + 1;
+  const target = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long" }).format(new Date(ny, nm - 1, 15));
+  const goTo = async (p: import("@playwright/test").Page) => {
+    for (let i = 0; i < 3 && (await p.getByTestId("calendar-month").textContent()) !== target; i++) {
+      await p.getByRole("button", { name: "다음 달" }).click();
+    }
+    await expect(p.getByTestId("calendar-month")).toHaveText(target);
+  };
   const iso = `${ny}-${String(nm).padStart(2, "0")}-15T00:30:00+09:00`;
   await adminDb().from("live_sessions").insert({ category: "es-conversation", title: `${TAG} 자정 직후`, starts_at: iso, duration_min: 30, min_tier: "basic" });
 
   const seoul = await newUserPage(browser, standard, "/myclass?tab=schedule");
   await seoul.page.goto("/myclass?tab=schedule");
-  await expect(seoul.page.locator('[data-dot="live"]').first()).toBeVisible();
-  await seoul.page.getByRole("button", { name: "다음 달" }).click();
+  await expect(seoul.page.getByTestId("calendar-month")).toBeVisible();
+  await goTo(seoul.page);
   await expect(seoul.page.locator(`[data-day="${ny}-${String(nm).padStart(2, "0")}-15"] [data-dot="live"]`)).toHaveCount(1);
   const seoulText = await seoul.page.getByTestId("calendar-list").locator("li").filter({ hasText: "자정 직후" }).locator("[data-event-time]").textContent();
   await seoul.context.close();
@@ -159,7 +178,8 @@ test("13.6-9 캘린더: 점 표시, 시간대에 따라 날짜·시간이 바뀜
   const page = await la.newPage();
   const { loginAs } = await import("./helpers/supa");
   await loginAs(page, standard, "/myclass?tab=schedule");
-  await page.getByRole("button", { name: "다음 달" }).click();
+  await expect(page.getByTestId("calendar-month")).toBeVisible();
+  await goTo(page);
   await expect(page.locator(`[data-day="${ny}-${String(nm).padStart(2, "0")}-14"] [data-dot="live"]`)).toHaveCount(1);
   const laText = await page.getByTestId("calendar-list").locator("li").filter({ hasText: "자정 직후" }).locator("[data-event-time]").textContent();
   expect(laText).not.toBe(seoulText);

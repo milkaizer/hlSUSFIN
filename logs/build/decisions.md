@@ -127,3 +127,6 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - `/terms`, `/privacy` 본문은 `content/legal.ts`(한/영), 화면은 `components/LegalDoc.tsx`. 문의처는 `NEXT_PUBLIC_CONTACT_EMAIL` 이 있으면 이메일, 없으면 Q&A 게시판 안내 문장. 시행일은 "정식 공개일" 자리표시.
 - 두 문서는 운영자 검토용 초안이다. 학생 초대 전에 사람이(가능하면 법률 전문가가) 검토해야 함. 특히 보관 기간(탈퇴 후 5일, 종료 후 30일), 국외 이전 표기, 만 14세 미만 보호자 동의 절차, 보호책임자 성명 기재 여부.
 - 학생 안내 인쇄본은 `docs/student-guide.html`(A4, 한국어 1쪽 + 영어 1쪽)을 `node scripts/student-guide-pdf.mjs` 로 `docs/student-guide.pdf` 로 만든다. md 를 고치면 html 도 같이 고칠 것. 배포 주소가 정해지면 `<배포 후 주소>` 를 세 파일 모두에서 바꾸고 PDF 를 다시 만든다.
+
+## 관리자 지정 (2026-10-27)
+- 사용자가 Google, 메일 링크로 로그인한 뒤 지정한 계정 1개를 admin, approved 로 바꿈. SQL Editor 대신 service_role REST PATCH 사용, 결과 행 1개 확인.

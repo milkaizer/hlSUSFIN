@@ -34,7 +34,7 @@
 ## 사람이 할 일
 `docs/SETUP.md` 참고. 요약:
 1. GitHub 다시 연결, 저장소에 Claude GitHub App 설치 (push 용)
-2. (완료) Supabase 프로젝트, SQL 4개, URL 설정. 남은 것: Google OAuth, 메일 SMTP(학생 초대 전)
+2. (완료) Supabase 프로젝트, SQL 4개, URL 설정, Google OAuth(테스트 모드), Google·메일 링크 실제 로그인 확인, 관리자 1명 지정. 남은 것: 메일 SMTP(학생 초대 전)
 3. 키를 `.env.local`(본인 PC) 또는 클라우드 환경변수 + `<ref>.supabase.co` 도메인 허용(새 세션)
 
 ## 알려진 문제

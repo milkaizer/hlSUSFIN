@@ -147,4 +147,4 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 
 ## Google 앱 게시 준비 (2026-10-27)
 - 게시 버튼이 브랜딩 미완성으로 비활성이라 브랜딩에 홈(`https://vita-language.vercel.app`), 개인정보처리방침(`/privacy`), 이용약관(`/terms`), 승인된 도메인 `vita-language.vercel.app` 을 추가하고 저장. 로고는 넣지 않음(로고가 있으면 Google 브랜드 검수 대상이 됨).
-- 게시(Publish app) 클릭은 운영 반영 성격이라 사용자가 직접 누름.
+- 게시(Publish app) 클릭은 운영 반영 성격이라 사용자가 직접 누름. 2026-10-27 In production 확인. 이름, 이메일 기본 범위만 써서 100명 한도(민감 범위용)는 해당 없음.

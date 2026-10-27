@@ -144,3 +144,7 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - Cal.com 웹훅은 생성, 취소, 변경 3개만 구독. 비밀값은 `.env.local` 에서 클립보드로 복사해 사용자가 직접 붙여 넣음(화면, 채팅에 노출 없음).
 - 운영 웹훅 확인은 `scripts/cal-webhook-test.mjs` 를 운영 URL 로 실행. 테스트 행은 고정 uid `prodcheck-created` 로 만들고 바로 삭제. 관리자 계정은 수강 등록이 없어 상태가 over_limit 으로 저장됨(정상 동작).
 - 학생 안내문 md, html, pdf 의 주소 자리표시를 운영 주소로 바꿈.
+
+## Google 앱 게시 준비 (2026-10-27)
+- 게시 버튼이 브랜딩 미완성으로 비활성이라 브랜딩에 홈(`https://vita-language.vercel.app`), 개인정보처리방침(`/privacy`), 이용약관(`/terms`), 승인된 도메인 `vita-language.vercel.app` 을 추가하고 저장. 로고는 넣지 않음(로고가 있으면 Google 브랜드 검수 대상이 됨).
+- 게시(Publish app) 클릭은 운영 반영 성격이라 사용자가 직접 누름.

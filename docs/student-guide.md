@@ -1,6 +1,6 @@
 # Vita Language 시작 안내
 
-사이트 주소: `<배포 후 주소>` (영어 화면: `<배포 후 주소>/en`)
+사이트 주소: `https://vita-language.vercel.app` (영어 화면: `https://vita-language.vercel.app/en`)
 
 ## 1. 가입
 - 오른쪽 위 **로그인**을 누르고 **Google 계정으로 계속하기**를 누르거나, 이메일을 넣고 **로그인 링크 받기**를 누릅니다.
@@ -39,7 +39,7 @@
 
 # Getting started with Vita Language
 
-Site: `<address after launch>/en`
+Site: `https://vita-language.vercel.app/en`
 
 ## 1. Sign up
 - Click **Log in** at the top right. Click **Continue with Google**, or enter your email and click **Email me a login link**.

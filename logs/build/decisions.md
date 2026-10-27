@@ -135,3 +135,12 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 - 이벤트 4개 slug 를 과목 slug 와 같게 둠(es-conversation, es-school, ko-conversation, topik). 환경변수와 짝이 바로 보이게.
 - 위치는 Google Meet 하나만. 웹훅이 meet.google.com 주소만 받으므로 기본값 Cal Video 는 제거.
 - 웹훅은 공개 주소가 필요해서 Step D 배포 뒤로 미룸. 로컬 터널(ngrok 등)은 계정이 하나 더 필요해서 쓰지 않음.
+
+## Step D 배포 (2026-10-27)
+- Vercel 팀 Vita Language(Hobby), 프로젝트 vita-language, 운영 주소 https://vita-language.vercel.app. 함수 리전 icn1 확인.
+- 환경변수는 붙여 넣기에서 키가 중복되어 Import .env 로 넣음. `NEXT_PUBLIC_CONTACT_EMAIL` 은 값이 비어 있어 넣지 않음(빈 값이면 약관 문의처가 Q&A 안내로 나옴). 공개할 주소가 정해지면 추가 후 재배포.
+- Supabase Site URL 을 운영 주소로, Redirect URLs 에 운영 `/auth/callback` 추가. 로컬 3000, 3001 은 개발과 E2E 용으로 유지.
+- Google OAuth 클라이언트는 그대로. 리디렉션이 Supabase 주소를 거치므로 운영 도메인 추가가 필요 없음.
+- Cal.com 웹훅은 생성, 취소, 변경 3개만 구독. 비밀값은 `.env.local` 에서 클립보드로 복사해 사용자가 직접 붙여 넣음(화면, 채팅에 노출 없음).
+- 운영 웹훅 확인은 `scripts/cal-webhook-test.mjs` 를 운영 URL 로 실행. 테스트 행은 고정 uid `prodcheck-created` 로 만들고 바로 삭제. 관리자 계정은 수강 등록이 없어 상태가 over_limit 으로 저장됨(정상 동작).
+- 학생 안내문 md, html, pdf 의 주소 자리표시를 운영 주소로 바꿈.

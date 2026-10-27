@@ -1,6 +1,6 @@
 # PROGRESS
 
-마지막 갱신: 2026-10-26
+마지막 갱신: 2026-10-27
 
 | Phase | 상태 | 수용 테스트 | 비고 |
 |---|---|---|---|
@@ -11,12 +11,12 @@
 | P4 강의·수강신청 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P5 문제 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P6 콜·라이브 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
-| Step C Cal.com | 일부 완료 | 이벤트 4개(15분, Google Meet) 설정 화면에서 확인 | Google Calendar 연결, 예약 링크 4개 `.env.local` 반영. 웹훅과 `CAL_WEBHOOK_SECRET` 은 배포 주소가 생기는 Step D 에서 연결 |
+| Step C Cal.com | 완료 (실제 예약 1건 확인 남음) | 이벤트 4개(15분, Google Meet) 확인. 운영 웹훅: 잘못된 서명 401, 서명 맞춘 예약 생성 200 + `call_bookings` 행 저장 확인 후 삭제 | 웹훅 트리거 3개(생성, 취소, 변경), 같은 `CAL_WEBHOOK_SECRET` 을 Vercel 과 Cal.com 에 입력. Cal.com 실제 예약 payload 필드명은 학생 수강 승인 후 실제 예약으로 확인 (10.3) |
 | P7 게시판 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P8 전체 점검 | 완료, 수정 반영 | `logs/build/p8-check.md` | 남은 Medium 1, Low 9 수정. 13.3~13.7 은 실제 Supabase 필요 |
 | P9 보안 리뷰 | 완료, 수정 반영 | `logs/build/p9-security.md` | High 2, Medium 4, Low 4 모두 수정 (P9-7 은 페이지·액션 단 검사 추가로 보강) |
-| P10 배포 | 대기 (Vercel 가입 필요) | | Vercel 리전 icn1 고정(`vercel.json`) |
-| Step E 학생 초대 준비 | 일부 완료 | tsc, lint, build 오류 0, P1 17/17 | 약관·개인정보처리방침 한/영 초안(`content/legal.ts`, 사람 검토 필요), 학생 안내문 1쪽×2 PDF(`docs/student-guide.pdf`, 배포 주소 비어 있음). 남은 것: 메일 SMTP, Google 앱 Production 게시, 강의·레슨·문제 등록 |
+| P10 배포 (Step D) | 완료 | https://vita-language.vercel.app 공개 페이지 5개 200, My Class 비로그인 시 로그인으로 이동, 함수 리전 icn1 | Vercel 팀 Vita Language(Hobby), 환경변수 `.env` 가져오기. Supabase Site URL 운영 주소, Redirect URLs 에 운영 callback 추가(로컬 2개 유지). 운영 사이트 실제 로그인은 사용자 확인 남음 |
+| Step E 학생 초대 준비 | 일부 완료 | tsc, lint, build 오류 0, P1 17/17 | 약관·개인정보처리방침 한/영 초안(`content/legal.ts`, 사람 검토 필요), 학생 안내문 1쪽×2 PDF(`docs/student-guide.pdf`, 운영 주소 반영). 남은 것: 메일 SMTP, Google 앱 Production 게시, 강의·레슨·문제 등록 |
 
 ## 테스트 실행
 - P1: `bash scripts/test-p1.sh` (tsc, eslint, 미연결 빌드 2개, Playwright)

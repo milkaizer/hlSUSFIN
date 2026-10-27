@@ -15,7 +15,7 @@
    3. `supabase/migrations/0003_security.sql` (보안 리뷰 반영)
    4. `supabase/seed.sql`
 4. Authentication > URL Configuration
-   - Site URL: `http://localhost:3000` (배포 후 운영 주소로 변경)
+   - Site URL: `https://vita-language.vercel.app` (처음엔 `http://localhost:3000`)
    - Redirect URLs: `http://localhost:3000/auth/callback`, 배포 후 `https://<도메인>/auth/callback` 추가
 5. Authentication > Providers > Email: 활성 (매직링크)
 6. (선택, 권장, 지금은 SMTP 연결 필요) Supabase 는 사용자 SMTP 를 연결해야 템플릿을 고칠 수 있습니다. 기본 메일은 시간당 발송 수가 아주 적으므로 학생 초대 전에 SMTP(예: Resend) 를 연결하고 아래처럼 바꿉니다. Authentication > Email Templates 에서 **Magic Link** 와 **Confirm signup** 두 템플릿의 링크 주소(`{{ .ConfirmationURL }}` 자리)를 아래로 바꾸면, 학생이 메일을 다른 브라우저나 휴대폰 메일 앱에서 열어도 로그인됩니다. 처음 가입하는 학생은 Confirm signup 메일을 받으므로 둘 다 바꿉니다.

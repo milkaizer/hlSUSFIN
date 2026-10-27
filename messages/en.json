@@ -19,7 +19,8 @@
     "language": "한국어",
     "skip": "Skip to content",
     "main": "Main menu",
-    "home": "Vita Language home"
+    "home": "Vita Language home",
+    "submenu": "{name} submenu"
   },
   "home": {
     "heroBefore": "¿",
@@ -87,7 +88,9 @@
     "unitCount": "{count} units",
     "firstUnit": "Unit 1: {first}",
     "includesShort": "Lessons, practice, Q&A",
-    "includesSub": "Live classes and calls from Standard"
+    "includesSub": "Live classes and calls from Standard",
+    "tracks": "Tracks",
+    "breadcrumb": "Breadcrumb"
   },
   "pricing": {
     "title": "Plans",

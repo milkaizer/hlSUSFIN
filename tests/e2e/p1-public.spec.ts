@@ -210,3 +210,87 @@ test("스크린샷: 홈, 과목, 요금제 390·1280", async ({ page }) => {
     }
   }
 });
+
+test("과목 메뉴: 데스크톱 마우스로 과목, 학교, 학년", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await page.goto("/");
+  await page.getByTestId("courses-toggle").click();
+  const menu = page.getByTestId("courses-menu");
+  const school = menu.getByRole("link", { name: "스페인어 내신" });
+  await school.hover();
+  await expect(school).toHaveAttribute("aria-expanded", "true");
+  const jeju = menu.getByRole("link", { name: "제주외고" });
+  await jeju.hover();
+  await expect(jeju).toHaveAttribute("aria-expanded", "true");
+  const grade = menu.getByRole("link", { name: "2학년" });
+  await expect(grade).toBeVisible();
+  // 1024px 에서도 마지막 옆 메뉴가 화면 안
+  const box = await grade.boundingBox();
+  expect(box!.x + box!.width).toBeLessThanOrEqual(1024);
+  await grade.click();
+  await expect(page).toHaveURL(/\/courses\/es-school\/jeju\/grade-2$/);
+  await expect(page.locator("h1")).toHaveText("스페인어 내신 · 제주외고 2학년");
+  // 수강신청은 과목 단위
+  await expect(page.getByRole("link", { name: "이 과목 수강신청" })).toHaveAttribute("href", "/apply?category=es-school");
+});
+
+test("과목 메뉴: 데스크톱 방향키", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const toggle = page.getByTestId("courses-toggle");
+  const menu = page.getByTestId("courses-menu");
+  await toggle.focus();
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  await expect(menu.getByRole("link", { name: "스페인어 회화" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowRight");
+  await expect(menu.getByRole("link", { name: "고양외고" })).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  const jeju = menu.getByRole("link", { name: "제주외고" });
+  await expect(jeju).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect(menu.getByRole("link", { name: "1학년" })).toBeFocused();
+  // 왼쪽으로 나오면 학년 메뉴가 접힌다
+  await page.keyboard.press("ArrowLeft");
+  await expect(jeju).toBeFocused();
+  await expect(jeju).toHaveAttribute("aria-expanded", "false");
+  await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowDown");
+  await expect(menu.getByRole("link", { name: "2학년" })).toBeFocused();
+  // Esc 는 전체를 닫고 과목 버튼으로
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await expect(toggle).toBeFocused();
+});
+
+test("과목 메뉴: 모바일 아코디언", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+  await page.getByTestId("menu-toggle").click();
+  const acc = page.getByTestId("courses-accordion");
+  await acc.getByRole("button", { name: "스페인어 내신 세부 메뉴" }).click();
+  await acc.getByRole("button", { name: "제주외고 세부 메뉴" }).click();
+  const grade = acc.getByRole("link", { name: "2학년" });
+  await expect(grade).toBeVisible();
+  expect((await grade.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await grade.click();
+  await expect(page).toHaveURL(/\/courses\/es-school\/jeju\/grade-2$/);
+  await expect(page.locator("h1")).toHaveText("스페인어 내신 · 제주외고 2학년");
+});
+
+test("세부 과정 200, 없는 경로 404", async ({ page, request }) => {
+  for (const p of ["/courses/es-conversation/dele-b2", "/courses/es-school/goyang", "/courses/ko-conversation/advanced", "/courses/topik/topik-1"]) {
+    expect((await request.get(p)).status(), p).toBe(200);
+  }
+  for (const p of ["/courses/es-school/jeju/grade-4", "/courses/es-school/busan", "/courses/topik/beginner",
+    "/courses/es-conversation/beginner/extra", "/courses/unknown/beginner", "/en/courses/es-school/jeju/grade-9"]) {
+    expect((await request.get(p)).status(), p).toBe(404);
+  }
+  // 영어 페이지는 학교 전체 이름
+  const res = await page.goto("/en/courses/es-school/jeju/grade-2");
+  expect(res?.status()).toBe(200);
+  await expect(page.locator("h1")).toHaveText("Spanish for school exams · Jeju Foreign Language High School Grade 2");
+});

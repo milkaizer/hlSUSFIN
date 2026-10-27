@@ -148,3 +148,17 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 ## Google 앱 게시 준비 (2026-10-27)
 - 게시 버튼이 브랜딩 미완성으로 비활성이라 브랜딩에 홈(`https://vita-language.vercel.app`), 개인정보처리방침(`/privacy`), 이용약관(`/terms`), 승인된 도메인 `vita-language.vercel.app` 을 추가하고 저장. 로고는 넣지 않음(로고가 있으면 Google 브랜드 검수 대상이 됨).
 - 게시(Publish app) 클릭은 운영 반영 성격이라 사용자가 직접 누름. 2026-10-27 In production 확인. 이름, 이메일 기본 범위만 써서 100명 한도(민감 범위용)는 해당 없음.
+
+## 메일 발송, 도메인 (2026-10-28)
+- 도메인 vitalanguage.com 을 Vercel 에서 구매(사용자 결제). Vercel 권장대로 루트는 www 로 308 이동, 기준 주소는 https://www.vitalanguage.com. 기존 vita-language.vercel.app 도 그대로 동작(Cal.com 웹훅은 기존 주소 유지).
+- Supabase Site URL 을 www 주소로, Redirect URLs 에 www callback 추가. 기존 주소는 유지.
+- Resend: 도메인 vitalanguage.com, 지역 Tokyo(ap-northeast-1, 한국에서 가장 가까움). DNS 4개(DKIM TXT, send/rsend CNAME, DMARC p=none)를 Vercel DNS 에 넣고 Verified 확인. API 키는 Sending access 권한. 키는 사용자가 Supabase 에 직접 붙여 넣음(화면, 채팅 노출 없음).
+- Supabase SMTP: smtp.resend.com:465, 사용자 resend, 보내는 주소 no-reply@vitalanguage.com, 이름 Vita Language.
+- 메일 템플릿 Magic Link, Confirm sign up 두 개를 token_hash 링크로 바꾸고 한/영 두 언어로 씀. 다른 브라우저나 휴대폰 메일 앱에서 열어도 로그인됨.
+- Vercel `NEXT_PUBLIC_SITE_URL` 은 Secret 유형이라 값을 못 바꾸고, 삭제 후 Config 로 재생성하는 클릭이 세션 안전 장치에 막힘. 이 값은 metadataBase(링크 미리보기)에만 쓰여 vercel.app 주소로 남겨 둠. 사용자가 나중에 직접 교체.
+
+## 과목 메뉴 세부 과정 (2026-10-28)
+- 사용자 요청: 과목 드롭다운을 과목별 하위 메뉴로. 스페인어 회화(초급, 중급, 고급, DELE B1, DELE B2), 스페인어 내신(고양외고, 인천외고, 제주외고 > 1~3학년), 한국어 회화(초급, 중급, 고급), TOPIK(I, II). "한국어도 그렇게"는 이렇게 해석.
+- 세부 과정은 메뉴와 안내 페이지 단위로만 둠. 수강신청, 회화 콜, 수강 권한, DB 는 기존 과목 4개 단위 그대로(마이그레이션 없음, 보수적 선택). 강의를 세부 과정별로 묶는 일은 필요해지면 courses 에 track 컬럼을 추가하는 후속 작업.
+- 주소: /courses/{과목}/{과정}, 내신 학년은 /courses/es-school/{학교}/grade-{n}. 없는 경로는 404.
+- 데스크톱은 마우스 올림(150ms 지연)과 키보드로 오른쪽 옆 메뉴, 모바일은 아코디언. 검증 Low 4(링크의 aria-haspopup 오표기)는 제거해 반영. Low 3(1024px 이상 터치 기기에서 옆 메뉴 탭 불가)은 과목 페이지의 세부 과정 칩으로 갈 수 있어 보류.

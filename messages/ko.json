@@ -19,7 +19,8 @@
     "language": "English",
     "skip": "본문으로 건너뛰기",
     "main": "주 메뉴",
-    "home": "Vita Language 홈"
+    "home": "Vita Language 홈",
+    "submenu": "{name} 세부 메뉴"
   },
   "home": {
     "heroBefore": "¿",
@@ -87,7 +88,9 @@
     "unitCount": "{count}개 단원",
     "firstUnit": "1단원 {first}",
     "includesShort": "강의, 문제, Q&A",
-    "includesSub": "라이브와 회화 콜은 스탠다드부터"
+    "includesSub": "라이브와 회화 콜은 스탠다드부터",
+    "tracks": "세부 과정",
+    "breadcrumb": "현재 위치"
   },
   "pricing": {
     "title": "요금제",

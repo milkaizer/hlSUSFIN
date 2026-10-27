@@ -130,3 +130,8 @@ HANDOFF.md 와 다르게 정했거나, 문서에 없어서 정한 것. 한 줄�
 
 ## 관리자 지정 (2026-10-27)
 - 사용자가 Google, 메일 링크로 로그인한 뒤 지정한 계정 1개를 admin, approved 로 바꿈. SQL Editor 대신 service_role REST PATCH 사용, 결과 행 1개 확인.
+
+## Step C Cal.com (2026-10-27)
+- 이벤트 4개 slug 를 과목 slug 와 같게 둠(es-conversation, es-school, ko-conversation, topik). 환경변수와 짝이 바로 보이게.
+- 위치는 Google Meet 하나만. 웹훅이 meet.google.com 주소만 받으므로 기본값 Cal Video 는 제거.
+- 웹훅은 공개 주소가 필요해서 Step D 배포 뒤로 미룸. 로컬 터널(ngrok 등)은 계정이 하나 더 필요해서 쓰지 않음.

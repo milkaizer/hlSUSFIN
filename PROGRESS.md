@@ -11,6 +11,7 @@
 | P4 강의·수강신청 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P5 문제 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P6 콜·라이브 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
+| Step C Cal.com | 일부 완료 | 이벤트 4개(15분, Google Meet) 설정 화면에서 확인 | Google Calendar 연결, 예약 링크 4개 `.env.local` 반영. 웹훅과 `CAL_WEBHOOK_SECRET` 은 배포 주소가 생기는 Step D 에서 연결 |
 | P7 게시판 | 완료, 실제 Supabase E2E 통과 | `bash scripts/test-app.sh` 32/32 PASS (2026-10-26) | |
 | P8 전체 점검 | 완료, 수정 반영 | `logs/build/p8-check.md` | 남은 Medium 1, Low 9 수정. 13.3~13.7 은 실제 Supabase 필요 |
 | P9 보안 리뷰 | 완료, 수정 반영 | `logs/build/p9-security.md` | High 2, Medium 4, Low 4 모두 수정 (P9-7 은 페이지·액션 단 검사 추가로 보강) |

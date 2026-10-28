@@ -26,7 +26,7 @@ test("13.1-2 /en 메뉴와 히어로 영어", async ({ page }) => {
   expect(res?.status()).toBe(200);
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
   const nav = page.getByRole("navigation", { name: "Main menu" });
-  await expect(nav.getByRole("button", { name: "Courses" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Spanish", exact: true })).toBeVisible();
   await expect(nav.getByRole("link", { name: "Plans" })).toBeVisible();
   await expect(nav.getByRole("link", { name: "Notices and Q&A" })).toBeVisible();
   await expect(page.locator("h1")).toContainText("How many sentences did you say today");
@@ -134,35 +134,39 @@ test("13.1-13 /myclass 비로그인은 로그인으로", async ({ page }) => {
   await expect(page.getByTestId("login-not-configured")).toBeVisible();
 });
 
-test("13.1-14 키보드: 헤더 메뉴, 드롭다운 Enter·Esc, 포커스 링", async ({ page }) => {
+test("13.1-14 키보드: 헤더 과목 링크, 아래 방향키·Esc, 포커스 링", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  const toggle = page.getByTestId("courses-toggle");
-  const menu = page.getByTestId("courses-menu");
-  // 건너뛰기 링크, 로고, 과목 버튼 순
+  const bar = page.getByTestId("desktop-nav");
+  const top = bar.getByRole("link", { name: "스페인어 회화", exact: true });
+  // 건너뛰기 링크, 위쪽 띠의 언어, 로고, 첫 과목 순
   await page.keyboard.press("Tab");
   await expect(page.getByRole("link", { name: "본문으로 건너뛰기" })).toBeFocused();
   await page.keyboard.press("Tab");
+  await expect(page.getByRole("link", { name: "English" })).toBeFocused();
   await page.keyboard.press("Tab");
-  await expect(toggle).toBeFocused();
-  const outline = await toggle.evaluate((el) => {
+  await page.keyboard.press("Tab");
+  await expect(top).toBeFocused();
+  const outline = await top.evaluate((el) => {
     const s = getComputedStyle(el);
     return `${s.outlineStyle} ${s.outlineWidth} ${s.outlineColor}`;
   });
   expect(outline).toBe("solid 3px rgb(233, 168, 0)");
 
-  await page.keyboard.press("Enter");
-  await expect(menu).toBeVisible();
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  // 포커스만으로는 열리지 않고, Tab 은 다음 과목으로
+  await expect(top).toHaveAttribute("aria-expanded", "false");
   await page.keyboard.press("Tab");
-  await expect(menu.getByRole("link").first()).toBeFocused();
-  await page.keyboard.press("Escape");
-  await expect(menu).toBeHidden();
-  await expect(toggle).toBeFocused();
+  await expect(bar.getByRole("link", { name: "스페인어 내신", exact: true })).toBeFocused();
+  await page.keyboard.press("Shift+Tab");
 
-  // Enter 로 열고 링크로 이동
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Tab");
+  await page.keyboard.press("ArrowDown");
+  await expect(top).toHaveAttribute("aria-expanded", "true");
+  await expect(bar.getByRole("link", { name: "초급" })).toBeFocused();
+  await page.keyboard.press("Escape");
+  await expect(bar.getByRole("link", { name: "초급" })).toBeHidden();
+  await expect(top).toBeFocused();
+
+  // Enter 는 과목 페이지로 이동
   await page.keyboard.press("Enter");
   await expect(page).toHaveURL(/\/courses\/es-conversation$/);
 });
@@ -170,7 +174,7 @@ test("13.1-14 키보드: 헤더 메뉴, 드롭다운 Enter·Esc, 포커스 링",
 test("P1 검증 D1: 영어에서 한국어로 바꾸면 한국어 유지", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/en/pricing");
-  await page.getByRole("navigation", { name: "Main menu" }).getByRole("link", { name: "한국어" }).click();
+  await page.getByRole("link", { name: "한국어", exact: true }).click();
   await expect(page).toHaveURL(/\/pricing$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "ko");
   await page.getByRole("navigation", { name: "주 메뉴" }).getByRole("link", { name: "공지·Q&A" }).click();
@@ -178,7 +182,7 @@ test("P1 검증 D1: 영어에서 한국어로 바꾸면 한국어 유지", async
   await expect(page.locator("html")).toHaveAttribute("lang", "ko");
   // 쿼리 유지
   await page.goto("/apply?category=topik");
-  await page.getByRole("navigation", { name: "주 메뉴" }).getByRole("link", { name: "English" }).click();
+  await page.getByRole("link", { name: "English", exact: true }).click();
   await expect(page).toHaveURL(/\/en\/apply\?category=topik$/);
 });
 
@@ -211,22 +215,31 @@ test("스크린샷: 홈, 과목, 요금제 390·1280", async ({ page }) => {
   }
 });
 
-test("과목 메뉴: 데스크톱 마우스로 과목, 학교, 학년", async ({ page }) => {
-  await page.setViewportSize({ width: 1024, height: 800 });
+test("과목 메뉴: 헤더에 과목 4개, 마우스로 과목, 학교, 학년", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/");
-  await page.getByTestId("courses-toggle").click();
-  const menu = page.getByTestId("courses-menu");
-  const school = menu.getByRole("link", { name: "스페인어 내신" });
+  const bar = page.getByTestId("desktop-nav");
+  // '과목' 칸 없이 과목이 헤더 맨 위에 바로 있다
+  await expect(bar.getByRole("button", { name: "과목" })).toHaveCount(0);
+  for (const name of ["스페인어 회화", "스페인어 내신", "한국어 회화", "TOPIK"]) {
+    await expect(bar.getByRole("link", { name, exact: true })).toBeVisible();
+  }
+  const school = bar.getByRole("link", { name: "스페인어 내신", exact: true });
   await school.hover();
   await expect(school).toHaveAttribute("aria-expanded", "true");
-  const jeju = menu.getByRole("link", { name: "제주외고" });
+  const jeju = bar.getByRole("link", { name: "제주외고" });
   await jeju.hover();
   await expect(jeju).toHaveAttribute("aria-expanded", "true");
-  const grade = menu.getByRole("link", { name: "2학년" });
+  const grade = bar.getByRole("link", { name: "2학년" });
   await expect(grade).toBeVisible();
-  // 1024px 에서도 마지막 옆 메뉴가 화면 안
   const box = await grade.boundingBox();
-  expect(box!.x + box!.width).toBeLessThanOrEqual(1024);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(1280);
+  // 다른 과목으로 옮기면 앞 과목 메뉴는 닫힌다
+  await bar.getByRole("link", { name: "TOPIK", exact: true }).hover();
+  await expect(bar.getByRole("link", { name: "TOPIK II" })).toBeVisible();
+  await expect(grade).toBeHidden();
+  await school.hover();
+  await jeju.hover();
   await grade.click();
   await expect(page).toHaveURL(/\/courses\/es-school\/jeju\/grade-2$/);
   await expect(page.locator("h1")).toHaveText("스페인어 내신 · 제주외고 2학년");
@@ -237,14 +250,17 @@ test("과목 메뉴: 데스크톱 마우스로 과목, 학교, 학년", async ({
 test("과목 메뉴: 데스크톱 방향키", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
-  const toggle = page.getByTestId("courses-toggle");
-  const menu = page.getByTestId("courses-menu");
-  await toggle.focus();
-  await page.keyboard.press("Enter");
-  await page.keyboard.press("Tab");
-  await expect(menu.getByRole("link", { name: "스페인어 회화" })).toBeFocused();
-  await page.keyboard.press("ArrowDown");
+  const menu = page.getByTestId("desktop-nav");
+  const first = menu.getByRole("link", { name: "스페인어 회화", exact: true });
+  const school = menu.getByRole("link", { name: "스페인어 내신", exact: true });
+  await first.focus();
+  // 좌우는 과목 사이 이동 (끝에서 처음으로)
+  await page.keyboard.press("ArrowLeft");
+  await expect(menu.getByRole("link", { name: "TOPIK", exact: true })).toBeFocused();
   await page.keyboard.press("ArrowRight");
+  await page.keyboard.press("ArrowRight");
+  await expect(school).toBeFocused();
+  await page.keyboard.press("ArrowDown");
   await expect(menu.getByRole("link", { name: "고양외고" })).toBeFocused();
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("ArrowDown");
@@ -259,10 +275,34 @@ test("과목 메뉴: 데스크톱 방향키", async ({ page }) => {
   await page.keyboard.press("ArrowRight");
   await page.keyboard.press("ArrowDown");
   await expect(menu.getByRole("link", { name: "2학년" })).toBeFocused();
-  // Esc 는 전체를 닫고 과목 버튼으로
+  // Esc 는 전체를 닫고 헤더의 과목으로
   await page.keyboard.press("Escape");
-  await expect(menu).toBeHidden();
-  await expect(toggle).toBeFocused();
+  await expect(menu.getByRole("link", { name: "고양외고" })).toBeHidden();
+  await expect(school).toBeFocused();
+  // 고양외고에서 왼쪽은 헤더 과목으로 나오며 닫힌다
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowLeft");
+  await expect(school).toBeFocused();
+  await expect(school).toHaveAttribute("aria-expanded", "false");
+});
+
+test("과목 메뉴: 1280px 미만은 모바일 메뉴, 1280px 은 한 줄", async ({ page }) => {
+  await page.setViewportSize({ width: 1024, height: 800 });
+  await page.goto("/");
+  await expect(page.getByTestId("desktop-nav")).toBeHidden();
+  await expect(page.getByTestId("menu-toggle")).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1024);
+  // 1280px 에서 한국어, 영어 모두 과목 줄과 오른쪽 버튼이 겹치지 않는다
+  await page.setViewportSize({ width: 1280, height: 800 });
+  for (const p of ["/", "/en"]) {
+    await page.goto(p);
+    await page.evaluate(() => document.fonts.ready);
+    const bar = page.getByTestId("desktop-nav");
+    await expect(bar).toBeVisible();
+    const gap = await bar.evaluate((ul) => (ul.nextElementSibling as HTMLElement).getBoundingClientRect().left - ul.getBoundingClientRect().right);
+    expect(gap, p).toBeGreaterThanOrEqual(16);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(1280);
+  }
 });
 
 test("과목 메뉴: 모바일 아코디언", async ({ page }) => {

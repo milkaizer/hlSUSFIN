@@ -63,7 +63,7 @@ export function QuizRunner({ attemptId, questions, deadline, serverNow }: { atte
   return (
     <div>
       {left !== null && (
-        <div className="sticky top-16 z-20 lg:top-14 -mx-5 mb-6 flex items-baseline gap-2 border-b border-line bg-paper/95 px-5 py-3 backdrop-blur sm:mx-0 sm:rounded-tile sm:border sm:px-4" role="timer" aria-live="off">
+        <div className="sticky top-16 z-20 xl:top-14 -mx-5 mb-6 flex items-baseline gap-2 border-b border-line bg-paper/95 px-5 py-3 backdrop-blur sm:mx-0 sm:rounded-tile sm:border sm:px-4" role="timer" aria-live="off">
           <span className="text-sm text-muted">{t("timeLeft")}</span>
           <span className={`text-[20px] font-extrabold tabular-nums ${left < 60000 ? "text-warn" : ""}`} data-testid="time-left">{mmss(left)}</span>
         </div>

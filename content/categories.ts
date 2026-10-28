@@ -11,6 +11,8 @@ export type CategoryInfo = {
   slug: CategorySlug;
   lang: "es" | "ko";
   name: L;
+  // 헤더 메뉴에 쓰는 짧은 이름 (없으면 name)
+  menu?: L;
   short: L;
   audience: L;
   curriculum: LL;
@@ -40,6 +42,7 @@ export const categories: CategoryInfo[] = [
     slug: "es-conversation",
     lang: "es",
     name: { ko: "스페인어 회화", en: "Spanish conversation" },
+    menu: { ko: "스페인어 회화", en: "Spanish" },
     short: { ko: "여행, 업무, 유학에서 바로 쓰는 말하기", en: "Speaking you can use for travel, work and study" },
     audience: { ko: "실제 대화를 목표로 스페인어를 배우는 대학생과 성인", en: "University students and adults who want to hold real conversations in Spanish" },
     curriculum: {
@@ -57,6 +60,7 @@ export const categories: CategoryInfo[] = [
     slug: "es-school",
     lang: "es",
     name: { ko: "스페인어 내신", en: "Spanish for school exams" },
+    menu: { ko: "스페인어 내신", en: "School Spanish" },
     short: { ko: "외고·국제고 스페인어 내신 대비", en: "School exam prep for Korean high schools" },
     audience: { ko: "스페인어 내신을 준비하는 외고·국제고 학생", en: "Korean high school students preparing for Spanish school exams" },
     curriculum: {
@@ -74,6 +78,7 @@ export const categories: CategoryInfo[] = [
     slug: "ko-conversation",
     lang: "ko",
     name: { ko: "한국어 회화", en: "Korean conversation" },
+    menu: { ko: "한국어 회화", en: "Korean" },
     short: { ko: "외국인 학습자를 위한 한국어 말하기", en: "Speaking Korean in everyday situations" },
     audience: { ko: "한국어를 배우는 외국인 학습자", en: "Learners of Korean, including Sejong Institute students" },
     curriculum: {

@@ -146,10 +146,12 @@
     "emailSubmit": "Email me a login link",
     "sending": "Sending",
     "emailSent": "We sent a login link to {email}. Open it from your inbox.",
-    "sameBrowser": "Open the link in this browser to log in. If you open it on another device or app, request a new link.",
+    "sameBrowser": "You can open the link in your phone mail app. One account can be signed in on one device, so you will be signed in on the device where you open the link.",
     "invalidEmail": "Check the email address and try again.",
     "other_device": "You logged in on another device, so this device was logged out. Each account works on one device at a time.",
     "failed": "Login failed. Try again.",
+    "sendFailed": "We could not send the sign-in email. Please try again shortly.",
+    "tooMany": "We just sent you an email. Please wait about a minute before asking again.",
     "notConfigured": "The login server is not connected yet. Contact the administrator.",
     "policy": "Each account can be logged in on one device at a time. Logging in on a new device logs out the previous one."
   },

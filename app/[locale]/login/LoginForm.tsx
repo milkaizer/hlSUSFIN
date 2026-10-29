@@ -34,7 +34,8 @@ export function LoginForm({ next, configured, supabaseUrl, supabaseAnonKey }: Pr
     setError(null);
     const { error: err } = await supabase.auth.signInWithOtp({ email: value, options: { emailRedirectTo: callback(), shouldCreateUser: true } });
     setBusy(false);
-    if (err) setError(t("failed"));
+    // 메일 발송 실패(SMTP 등)와 연속 요청 제한(429)을 로그인 실패와 구분해 보여 준다
+    if (err) setError(t(err.status === 429 ? "tooMany" : "sendFailed"));
     else setSentTo(value);
   }
 

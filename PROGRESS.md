@@ -16,7 +16,7 @@
 | P8 전체 점검 | 완료, 수정 반영 | `logs/build/p8-check.md` | 남은 Medium 1, Low 9 수정. 13.3~13.7 은 실제 Supabase 필요 |
 | P9 보안 리뷰 | 완료, 수정 반영 | `logs/build/p9-security.md` | High 2, Medium 4, Low 4 모두 수정 (P9-7 은 페이지·액션 단 검사 추가로 보강) |
 | P10 배포 (Step D) | 완료 | https://vita-language.vercel.app 공개 페이지 5개 200, My Class 비로그인 시 로그인으로 이동, 함수 리전 icn1 | Vercel 팀 Vita Language(Hobby), 환경변수 `.env` 가져오기. Supabase Site URL 운영 주소, Redirect URLs 에 운영 callback 추가(로컬 2개 유지). 운영 사이트 Google, 메일 링크 실제 로그인과 관리자 메뉴 사용자 확인(2026-10-27) |
-| Step E 학생 초대 준비 | 일부 완료 | tsc, lint, build 오류 0, P1 17/17 | 약관·개인정보처리방침 한/영 초안(`content/legal.ts`, 사람 검토 필요), 학생 안내문 1쪽×2 PDF(`docs/student-guide.pdf`, 운영 주소 반영). 메일 SMTP(Resend, vitalanguage.com) 연결과 token_hash 템플릿 완료. 과목 메뉴 세부 과정(26개 링크) 추가. 헤더의 '과목' 칸을 없애고 과목 4개를 헤더에 바로 배치(1280px 이상), 언어·관리자·로그아웃은 위쪽 띠로, P1 22/22. 메일 로그인 발송 오류(SMTP 키) 해결 후 발송 확인(2026-10-29). 남은 것: 휴대폰에서 실제 메일 로그인 확인, 강의·레슨·문제 등록, Vercel SITE_URL 교체 |
+| Step E 학생 초대 준비 | 일부 완료 | tsc, lint, build 오류 0, P1 17/17 | 약관·개인정보처리방침 한/영 초안(`content/legal.ts`, 사람 검토 필요), 학생 안내문 1쪽×2 PDF(`docs/student-guide.pdf`, 운영 주소 반영). 메일 SMTP(Resend, vitalanguage.com) 연결과 token_hash 템플릿 완료. 과목 메뉴 세부 과정(26개 링크) 추가. 헤더의 '과목' 칸을 없애고 과목 4개를 헤더에 바로 배치(1280px 이상), 언어·관리자·로그아웃은 위쪽 띠로, P1 22/22. 메일 로그인 발송 오류(SMTP 키) 해결 후 발송 확인(2026-10-29). 휴대폰 메일 앱에서 실제 로그인 사용자 확인(2026-10-29). 남은 것: 강의·레슨·문제 등록, Vercel SITE_URL 교체 |
 
 ## 테스트 실행
 - P1: `bash scripts/test-p1.sh` (tsc, eslint, 미연결 빌드 2개, Playwright)

@@ -73,8 +73,9 @@ export const terms: LegalDocs = {
       ],
       ul: [
         "강의 영상, 문제, 자료를 내려받거나 복제해서 다른 사람에게 주거나 인터넷에 올리면 안 됩니다.",
-        "강의 영상, 라이브 수업, 회화 콜을 녹화하거나 녹음해서는 안 됩니다. 꼭 필요하면 미리 운영자의 허락을 받아야 합니다.",
-        "강의 링크나 수업 입장 링크를 수강하지 않는 사람에게 공유하면 안 됩니다.",
+        "강의 영상, 라이브 수업, 회화 콜을 녹화하거나 녹음하거나 화면을 촬영해서는 안 됩니다. 꼭 필요하면 미리 운영자의 허락을 받아야 합니다.",
+        "강의 영상 주소(YouTube 등 영상 링크 포함)와 수업 입장 링크를 수강하지 않는 사람에게 보내거나, 단체 대화방, SNS, 다른 사이트에 올리면 안 됩니다. 함께 수강하는 사람끼리라도 자신의 계정으로 들어와서 봐야 합니다.",
+        "강의 영상에는 시청하는 계정의 이메일이 표시되므로, 영상이 밖으로 퍼지면 어느 계정에서 나왔는지 확인할 수 있습니다. 이 경우 운영자는 10조에 따라 그 계정의 이용을 중지할 수 있습니다.",
         "콘텐츠를 영리 목적으로 쓰거나 다른 강의의 재료로 쓰면 안 됩니다.",
       ],
     },
@@ -195,8 +196,9 @@ export const terms: LegalDocs = {
       ],
       ul: [
         "Do not download, copy, pass on or post lesson videos, questions or materials.",
-        "Do not record lesson videos, live classes or speaking calls, by video or audio, unless the operator has agreed in advance.",
-        "Do not share lesson links or class links with anyone who is not enrolled.",
+        "Do not record lesson videos, live classes or speaking calls, by video, audio or screen capture, unless the operator has agreed in advance.",
+        "Do not send lesson video addresses (including YouTube or other video links) or class links to anyone who is not enrolled, and do not post them in group chats, on social media or on other websites. Even students in the same course must watch through their own account.",
+        "Lesson videos show the email of the account watching them, so if a video is passed around, the operator can tell which account it came from. In that case the operator may suspend that account under section 10.",
         "Do not use the content for commercial purposes or as material for other courses.",
       ],
     },
